@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser,    BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
 
 
 class UserManager(BaseUserManager):
@@ -64,11 +65,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 #         return self.name
 
 
-# class Profile(models.Model):
-#     date_of_birth = models.DateField()
+class Profile(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    age = models.IntegerField(null=True, blank=True)
 
-#     def __str__(self):
-#         return 
+    def __str__(self):
+        return self.user.fullname
 
 
 # class Showcase(models.Model):

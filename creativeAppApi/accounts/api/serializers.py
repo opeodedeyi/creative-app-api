@@ -9,6 +9,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     password1 = serializers.CharField(write_only=True)
     fullname = serializers.CharField(required=True)
 
+
     def get_cleaned_data(self):
         super(CustomRegisterSerializer, self).get_cleaned_data()
 

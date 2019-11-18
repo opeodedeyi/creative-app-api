@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf.urls import url, include
 from rest_auth.registration.views import VerifyEmailView
 from rest_auth.views import PasswordResetView, PasswordResetConfirmView
-from .views import ConfirmEmailView, FacebookLogin, GoogleLogin
+from .views import ConfirmEmailView, CustomRegisterView, FacebookLogin, GoogleLogin
 
 
 urlpatterns = [
