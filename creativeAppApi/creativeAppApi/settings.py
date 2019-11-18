@@ -179,7 +179,9 @@ EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
 
 REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "accounts.api.serializers.CustomUserDetailsSerializer",
+    'LOGIN_SERIALIZER': 'accounts.api.serializers.LoginSerializer',
 }
+
 REST_AUTH_REGISTER_SERIALIZERS = {
     "REGISTER_SERIALIZER": "accounts.api.serializers.CustomRegisterSerializer",
 }

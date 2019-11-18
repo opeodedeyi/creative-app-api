@@ -1,10 +1,16 @@
 from rest_framework import serializers
 from rest_auth.registration.serializers import RegisterSerializer
+from rest_auth.serializers import LoginSerializer
 from django.contrib.auth import get_user_model
+
+
+class LoginSerializer(LoginSerializer):
+    username = None
 
 
 class CustomRegisterSerializer(RegisterSerializer):
 
+    username = None
     email = serializers.EmailField(required=True)
     password1 = serializers.CharField(write_only=True)
     fullname = serializers.CharField(required=True)
