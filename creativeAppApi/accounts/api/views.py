@@ -117,7 +117,7 @@ class ProfileDetailAPIView(APIView):
     TO-Do:
     customize the permission to is object owner or read only
     '''
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
 
     def get_object(self, pk):

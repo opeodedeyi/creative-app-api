@@ -30,6 +30,20 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ('pk', 'user', 'skills')
 
 
+class ProfileDetailedSerializer(serializers.ModelSerializer):
+    '''
+    gives a detailed description of the user, this ove would have 
+    following, followers, and all info about the user
+    '''
+    skills = SkillSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+        read_only_fields = ('pk', 'user', 'skills')
+
+
 ###################### user serializer ######################
 User = get_user_model()
 
@@ -68,13 +82,8 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
     the user to view his own data
     '''
     profiles = ProfileSerializer(read_only=True, many=True)
-    # user_profile = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = ('pk', 'email', 'fullname', 'profiles')
         read_only_fields = ('email', 'fullname', 'profiles')
-
-    # def get_user_profile(self, obj):
-    #     qs = Profile.objects.filter(user=obj)
-    #     return ProfileSerializer(qs).data

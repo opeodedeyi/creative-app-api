@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Showcase, Comment
 
-# Register your models here.
+admin.site.register(Showcase)
+admin.site.register(Comment)
