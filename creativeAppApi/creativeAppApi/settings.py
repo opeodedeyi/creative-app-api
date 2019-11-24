@@ -143,6 +143,7 @@ SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
+    # 'creativeAppApi.backends.EmailAndUsernameBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
@@ -171,7 +172,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'opeyemiodedeyi@gmail.com'
-EMAIL_HOST_PASSWORD = '9j@4lifE'
+EMAIL_HOST_PASSWORD = '9j@4life'
 DEFAULT_FROM_EMAIL = 'opeyemiodedeyi@gmail.com'
 DEFAULT_TO_EMAIL = EMAIL_HOST_USER
 

@@ -1,6 +1,7 @@
-from django.contrib.auth.models import AbstractBaseUser,    BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from datetime import date
 from django.conf import settings
 
 
@@ -55,46 +56,62 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
-# class Skill(models.Model):
-#     name = models.CharField(max_length=300)
-#     created_on = models.DateTimeField(auto_now=True)
-#     updated_on = models.DateTimeField(auto_now_add=True)
-#     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.DO_NOTHING)
+class Skill(models.Model):
+    name = models.CharField(max_length=300)
+    created_on = models.DateTimeField(auto_now=True)
+    updated_on = models.DateTimeField(auto_now_add=True)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.DO_NOTHING)
 
-#     def __str__(self):
-#         return self.name
+    def __str__(self):
+        return self.name
 
+
+SEX= (
+    ('M', 'Male'),
+    ('F', 'Female'),
+)
+
+BODYTYPE= (
+    ('Slim', 'Slim'),
+    ('Average', 'Average'),
+    ('Athletic', 'Athletic'),
+    ('Heavyset', 'Heavyset'),
+)
 
 class Profile(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    age = models.IntegerField(null=True, blank=True)
+    '''
+    Note:
+    profile photo is expecting photos link gotten from cloudnairy from the frontend
+    - The height is calculated in feets and inches
+    - Need to sort out location (lives in)
+    - Need to add an age function
+    - Need to add achievemnet as a foreign field 
+    - Need to add education also as a foreign field
+    - Add follow functionality
+    '''
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profiles')
+    date_of_birth = models.DateField(blank=True, verbose_name="DOB", null=True)
+    bio = models.TextField(max_length=500, blank=True, null=True)
+    profile_photo = models.CharField(blank=True, max_length=300, null=True)
+    skills = models.ManyToManyField(Skill, related_name='skills')
+    sex = models.CharField(max_length=1, choices=SEX, blank=True, null=True)
+    type_of_body = models.CharField(max_length=8, choices=BODYTYPE, blank=True, null=True)
+    feet = models.PositiveIntegerField(blank=True, null=True)
+    inches = models.PositiveIntegerField(blank=True, null=True)
+    lives_in = models.CharField(max_length=50, blank=True, null=True)
+    updated_on = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return self.user.fullname
 
 
-# class Showcase(models.Model):
-#     """Post model that would have the posts of the user"""
-#     title = models.CharField(max_length=500)
-#     description = models.TextField(null=True)
-#     skill_type = models.ForeignKey("Skill", on_delete=models.CASCADE)
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
-#     media = models.TextField(null=True)
-#     created_on = models.DateTimeField(auto_now=True)
-#     updated_on = models.DateTimeField(auto_now_add=True)
-#     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="like")
+class UserFollowing(models.Model):
+    '''
+    the created model shows info about when the person started following the user
+    '''
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="following", null=False, blank=False, on_delete=models.DO_NOTHING)
+    following_user_id = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="followers", null=False, blank=False, on_delete=models.DO_NOTHING)
 
-#     def __str__(self):
-#         return self.title
-
-
-# class CollaborationRequest(models.Model):
-#     post = models.ForeignKey("Showcase", on_delete=models.CASCADE)
-#     skill = models.ForeignKey("Skill", on_delete=models.CASCADE, null=True)
-#     requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     requested_on = models.DateTimeField(auto_created=True)
-#     approved = models.BooleanField(default=False, null=True)
-#     approved_on = models.DateTimeField(null=True)
-
-#     def __str__(self):
-#         return self.post.name
+    # You can even add info about when user started following
+    created = models.DateTimeField(auto_now_add=True)
