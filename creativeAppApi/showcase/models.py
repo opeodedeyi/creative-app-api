@@ -11,7 +11,7 @@ class Showcase(models.Model):
 
     people can like this showcases.
     '''
-    title = models.CharField(max_length=500)
+    title = models.CharField(max_length=50)
     description = models.TextField(null=True)
     skill_type = models.ForeignKey(Skill, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, related_name="Showcases")
@@ -30,14 +30,15 @@ class Comment(models.Model):
     Comment model, people will be able to comment on the showcase
     model above, and the comments can be upvoted
     '''
-    post = models.ForeignKey(Showcase, on_delete=models.CASCADE, related_name="comments")
-    content = models.TextField(null=False)
-    comment_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    comment_on = models.DateTimeField(auto_created=True)
-    comment_voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="comment_upvotes")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    body = models.TextField(null=False)
+    showcase = models.ForeignKey(Showcase, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, 
+                            on_delete=models.CASCADE)
+    voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="votes")
 
-
-# class CollaborationRequest(models.Model):
+# class Collaborators(models.Model):
 #     post = models.ForeignKey(Showcase, on_delete=models.CASCADE)
 #     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, null=True)
 #     added_on = models.DateTimeField(null=True)

@@ -5,4 +5,5 @@ from django.conf.urls import url, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     url('api/accounts/', include('accounts.api.urls')),
+    url('api/showcase/', include('showcase.api.urls')),
 ]
