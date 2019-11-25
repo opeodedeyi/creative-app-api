@@ -87,3 +87,15 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
         model = User
         fields = ('pk', 'email', 'fullname', 'profiles')
         read_only_fields = ('email', 'fullname', 'profiles')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    '''
+    a special serializer with not too much details,
+    to chain to another serializer
+    '''
+
+    class Meta:
+        model = User
+        fields = ('pk', 'email', 'fullname')
+        read_only_fields = ('email', 'fullname')

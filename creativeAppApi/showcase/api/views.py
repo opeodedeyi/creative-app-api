@@ -6,18 +6,53 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
 from .permissions import IsUserOrReadOnly
-from .serializers import ShowcaseSerializer, CommentSerializer
+from .serializers import ShowcaseSerializer, CommentSerializer, ShowcaseDetaiedSerializer
 from ..models import Showcase, Comment
 
 
-class ShowcaseViewSet(viewsets.ModelViewSet):
+class showcaseCreateViewSet(generics.ListCreateAPIView):
     queryset = Showcase.objects.all()
-    lookup_field = "slug"
     serializer_class = ShowcaseSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class showcaseRUDViewSet(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Showcase.objects.all()
+    lookup_field = "slug"
+    serializer_class = ShowcaseDetaiedSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
+
+
+class ShowcaseLikeAPIView(APIView):
+    serializer_class = ShowcaseDetaiedSerializer
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, slug):
+        showcase = get_object_or_404(Showcase, slug=slug)
+        user = self.request.user
+
+        showcase.voters.remove(user)
+        showcase.save()
+
+        serializer_context = {"request": request}
+        serializer = self.serializer_class(showcase, context=serializer_context)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, slug):
+        showcase = get_object_or_404(Showcase, slug=slug)
+        user = self.request.user
+
+        showcase.voters.add(user)
+        showcase.save()
+
+        serializer_context = {"request": request}
+        serializer = self.serializer_class(showcase, context=serializer_context)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CommentCreateAPIView(generics.CreateAPIView):
