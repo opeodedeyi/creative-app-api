@@ -6,11 +6,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
 from .permissions import IsUserOrReadOnly
-from .serializers import ShowcaseSerializer, CommentSerializer, ShowcaseDetaiedSerializer
-from ..models import Showcase, Comment
+from .serializers import ShowcaseSerializer, CommentSerializer, ShowcaseDetaiedSerializer, ReplySerializer
+from ..models import Showcase, Comment, ReplyComment
 
 
+# SHOWCASE APIView
 class showcaseCreateViewSet(generics.ListCreateAPIView):
+    '''
+    Create showcases view. user must be logged in to do this
+    '''
     queryset = Showcase.objects.all()
     serializer_class = ShowcaseSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -20,6 +24,10 @@ class showcaseCreateViewSet(generics.ListCreateAPIView):
 
 
 class showcaseRUDViewSet(generics.RetrieveUpdateDestroyAPIView):
+    '''
+    Retrieve, update and destroy showcases view. user must be 
+    owner of the object to be able to destroy and update
+    '''
     queryset = Showcase.objects.all()
     lookup_field = "slug"
     serializer_class = ShowcaseDetaiedSerializer
@@ -27,6 +35,10 @@ class showcaseRUDViewSet(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ShowcaseLikeAPIView(APIView):
+    '''
+    Can like(post) and unlike(delete) the showcases, must be 
+    authenticated to do this
+    '''
     serializer_class = ShowcaseDetaiedSerializer
     permission_classes = [IsAuthenticated]
 
@@ -55,7 +67,12 @@ class ShowcaseLikeAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# COMMENT APIView
 class CommentCreateAPIView(generics.CreateAPIView):
+    '''
+    Can comment on showcases view. user must be 
+    authenticated to do this
+    '''
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
@@ -69,12 +86,20 @@ class CommentCreateAPIView(generics.CreateAPIView):
 
 
 class CommentRUDAPIView(generics.RetrieveUpdateDestroyAPIView):
+    '''
+    Can edit and delete  the comment, the user must be owner of 
+    the object to do this
+    '''
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
 
 
 class ShowcaseCommentListAPIView(generics.ListAPIView):
+    '''
+    Can see all the comments related to a particular showcase, 
+    the user must be authenticated to do this
+    '''
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
@@ -84,6 +109,10 @@ class ShowcaseCommentListAPIView(generics.ListAPIView):
 
 
 class CommentLikeAPIView(APIView):
+    '''
+    Can like(post) and unlike(delete) the comments, must be 
+    authenticated to do this
+    '''
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
@@ -108,5 +137,79 @@ class CommentLikeAPIView(APIView):
 
         serializer_context = {"request": request}
         serializer = self.serializer_class(comment, context=serializer_context)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# REPLY APIView
+class ReplyCreateAPIView(generics.CreateAPIView):
+    '''
+    Can reply on comment view. user must be 
+    authenticated to do this
+    '''
+    queryset = ReplyComment.objects.all()
+    serializer_class = ReplySerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        request_user = self.request.user
+        kwargs_pk = self.kwargs.get("pk")
+        comment = get_object_or_404(Comment, pk=kwargs_pk)
+
+        serializer.save(user=request_user, comment=comment)
+
+
+class ReplyRUDAPIView(generics.RetrieveUpdateDestroyAPIView):
+    '''
+    Can edit and delete  the reply, the user must be owner of 
+    the object to do this
+    '''
+    queryset = ReplyComment.objects.all()
+    serializer_class = ReplySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
+
+
+class ReplyListAPIView(generics.ListAPIView):
+    '''
+    Can see all the replies related to a particular comment, 
+    the user must be authenticated to do this
+    '''
+    serializer_class = ReplySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        kwarg_pk = self.kwargs.get("pk")
+        return ReplyComment.objects.filter(comment__pk=kwarg_pk).order_by("-created_at")
+
+
+class ReplyLikeAPIView(APIView):
+    '''
+    Can like(post) and unlike(delete) the reply, must be 
+    authenticated to do this
+    '''
+    serializer_class = ReplySerializer
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        reply = get_object_or_404(ReplyComment, pk=pk)
+        user = self.request.user
+
+        reply.voters.remove(user)
+        reply.save()
+
+        serializer_context = {"request": request}
+        serializer = self.serializer_class(reply, context=serializer_context)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, pk):
+        reply = get_object_or_404(ReplyComment, pk=pk)
+        user = self.request.user
+
+        reply.voters.add(user)
+        reply.save()
+
+        serializer_context = {"request": request}
+        serializer = self.serializer_class(reply, context=serializer_context)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

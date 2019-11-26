@@ -12,4 +12,8 @@ urlpatterns = [
     path("<slug:slug>/comments/", qv.ShowcaseCommentListAPIView.as_view(), name="comment-list"),
     path("comments/<int:pk>/", qv.CommentRUDAPIView.as_view(), name="comment-detail"),
     path("comments/<int:pk>/like/", qv.CommentLikeAPIView.as_view(), name="comment-like"),
+    path("comments/<int:pk>/reply/", qv.ReplyCreateAPIView.as_view(), name="reply-create"),
+    path("comments/<int:pk>/replies/", qv.ReplyListAPIView.as_view(), name="reply-list"),
+    path("replies/<int:pk>/", qv.ReplyRUDAPIView.as_view(), name="reply-detail"),
+    path("replies/<int:pk>/like/", qv.ReplyLikeAPIView.as_view(), name="reply-like"),
 ]

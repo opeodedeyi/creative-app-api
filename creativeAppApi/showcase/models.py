@@ -38,6 +38,22 @@ class Comment(models.Model):
                             on_delete=models.CASCADE)
     voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="votes")
 
+
+class ReplyComment(models.Model):
+    '''
+    Reply model, people will be able to reply to the comment
+    model above, and the reply can be upvoted
+    '''
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    body = models.TextField(null=False)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name="replies")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, 
+                            on_delete=models.CASCADE)
+    voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="replyvotes")
+
+
+
 # class Collaborators(models.Model):
 #     post = models.ForeignKey(Showcase, on_delete=models.CASCADE)
 #     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, null=True)
