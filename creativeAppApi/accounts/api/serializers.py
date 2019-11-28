@@ -35,7 +35,7 @@ class ProfileDetailedSerializer(serializers.ModelSerializer):
     gives a detailed description of the user, this ove would have 
     following, followers, and all info about the user
     '''
-    skills = SkillSerializer(read_only=True, many=True)
+    skills = SkillSerializer(many=True)
 
     class Meta:
         model = Profile
@@ -64,7 +64,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     email = serializers.EmailField(required=True)
     password1 = serializers.CharField(write_only=True)
     fullname = serializers.CharField(required=True)
-
+    slug = serializers.SlugField(read_only=True)
 
     def get_cleaned_data(self):
         super(CustomRegisterSerializer, self).get_cleaned_data()
@@ -82,11 +82,12 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
     the user to view his own data
     '''
     profiles = ProfileSerializer(read_only=True, many=True)
+    slug = serializers.SlugField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('pk', 'email', 'fullname', 'profiles')
-        read_only_fields = ('email', 'fullname', 'profiles')
+        fields = ('pk', 'email', 'fullname', 'profiles', 'slug')
+        read_only_fields = ('email', 'fullname', 'profiles', 'slug')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -94,8 +95,9 @@ class UserSerializer(serializers.ModelSerializer):
     a special serializer with not too much details,
     to chain to another serializer
     '''
+    slug = serializers.SlugField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('pk', 'email', 'fullname')
-        read_only_fields = ('email', 'fullname')
+        fields = ('pk', 'email', 'fullname', 'slug')
+        read_only_fields = ('email', 'fullname', 'slug')

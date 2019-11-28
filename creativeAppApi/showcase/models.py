@@ -38,6 +38,9 @@ class Comment(models.Model):
                             on_delete=models.CASCADE)
     voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="votes")
 
+    def __str__(self):
+        return self.user.fullname
+
 
 class ReplyComment(models.Model):
     '''
@@ -51,6 +54,9 @@ class ReplyComment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, 
                             on_delete=models.CASCADE)
     voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="replyvotes")
+
+    def __str__(self):
+        return self.user.fullname
 
 
 

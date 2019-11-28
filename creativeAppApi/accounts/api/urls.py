@@ -8,28 +8,25 @@ from .views import (ConfirmEmailView,
                     FacebookLogin, 
                     GoogleLogin, 
                     ListUsersView,
-                    UserDetailAPIView, 
-                    ProfileListAPIView, 
-                    ProfileDetailAPIView)
+                    UserRetriveAPIView,
+                    ProfileRetriveUpdateAPIView,
+                    SkillListAPIView)
 
 
 urlpatterns = [
-    url(r'^verify-email/$', VerifyEmailView.as_view(), name='account_email_verification_sent'),
-    url(r'^rest-auth/registration/account-confirm-email/(?P<key>[-:\w]+)/$', ConfirmEmailView.as_view(), name='account_confirm_email'),
+    path('verify-email/', VerifyEmailView.as_view(), name='account_email_verification_sent'),
+    path('signup/account-confirm-email/<key>/', ConfirmEmailView.as_view(), name='account_confirm_email'),
+    path('', include('rest_auth.urls')),
+    path('signup/', include('rest_auth.registration.urls')),
 
-    url('rest-auth/', include('rest_auth.urls')),
-    url('rest-auth/registration/', include('rest_auth.registration.urls')),
-    
-    url('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
-    url('rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path('facebook/', FacebookLogin.as_view(), name='fb_login'),
+    path('google/', GoogleLogin.as_view(), name='google_login'),
 
-    url(r'^rest-auth/password/reset/$', PasswordResetView.as_view(), name='password_reset'),
-    url(r'^rest-auth/password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-
-    url(r'^list-users/$', ListUsersView.as_view(), name='list-users'),
-    url(r'^list-users/(?P<pk>[-\w]+)/$', UserDetailAPIView.as_view(), name="user-details"),
+    path('password/reset/', PasswordResetView.as_view(), name='password_reset'),
+    path('password/reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('users/', ListUsersView.as_view(), name='list-users'),
+    path("users/<slug:slug>/", UserRetriveAPIView.as_view(), name="users-detail"),
     # To get the authenticated user's own object, its provided by djago-rest-auth using this route: 'rest-auth/user'
-
-    url(r'^profile/$', ProfileListAPIView.as_view(), name="list-profiles"),
-    url(r'^profile/(?P<pk>[-\w]+)/$', ProfileDetailAPIView.as_view(), name="profile-detail")
+    path("profile/<int:pk>/", ProfileRetriveUpdateAPIView.as_view(), name="profile-detail"),
+    path("skills/", SkillListAPIView.as_view(), name="skills"),
 ]

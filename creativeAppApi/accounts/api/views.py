@@ -6,15 +6,23 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import (AllowAny,
+                                        IsAuthenticatedOrReadOnly, 
+                                        IsAuthenticated, 
+                                        IsAdminUser)
+
+from .permissions import IsUserOrReadOnly, IsAdminUserOrReadOnly
 from allauth.account.models import EmailConfirmation, EmailConfirmationHMAC
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from rest_auth.registration.views import SocialLoginView
 from django.http import HttpResponseRedirect
 from django.db.models import Q
-from .serializers import CustomUserDetailsSerializer, ProfileSerializer
-from accounts.models import Profile
+from .serializers import (CustomUserDetailsSerializer, 
+                            ProfileSerializer, 
+                            ProfileDetailedSerializer,
+                            SkillSerializer)
+from accounts.models import Profile, Skill
 
 
 ############################### user authentication section ###############################
@@ -32,6 +40,7 @@ class CustomRegisterView(RegisterView):
     '''
     a custom register view that overrides the rest-auth's default 
     '''
+    permission_classes = [AllowAny]
     queryset = User.objects.all()
 
 
@@ -39,6 +48,7 @@ class ConfirmEmailView(APIView):
     '''
     a custom view that verifies the user email as the rest-auth default 
     solution doesnt work effectively
+    From: https://gist.github.com/iMerica/a6a7efd80d49d6de82c7928140676957
     '''
     permission_classes = [AllowAny]
 
@@ -46,7 +56,7 @@ class ConfirmEmailView(APIView):
         self.object = confirmation = self.get_object()
         confirmation.confirm(self.request)
         # A React/Vue Router Route will handle the failure scenario
-        return HttpResponseRedirect('/api/accounts/rest-auth/login/')
+        return HttpResponseRedirect('/api/accounts/login/')
 
     def get_object(self, queryset=None):
         key = self.kwargs['key']
@@ -67,7 +77,7 @@ class ConfirmEmailView(APIView):
         return qs
 
 
-############################### Listing usersin the database ###############################
+############################### Listing users in the database ###############################
 class ListUsersView(APIView):
     '''
     Gets all the users in the database
@@ -75,64 +85,44 @@ class ListUsersView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        user = User.objects.all()
+        user = get_user_model().objects.all()
         serializer = CustomUserDetailsSerializer(user, many=True)
         return Response(serializer.data)
 
 
-class UserDetailAPIView(APIView):
+class UserRetriveAPIView(generics.RetrieveAPIView):
     '''
-    Gets a particular user in the database
+    Gets a particular user in the database using the slug as the lookup
     '''
-    permission_classes = [AllowAny]
-
-    def get_object(self, pk):
-        user = get_object_or_404(User, pk=pk)
-        return user
-
-    def get(self, request, pk):
-        user = self.get_object(pk)
-        serializer = CustomUserDetailsSerializer(user)
-        return Response(serializer.data)
+    queryset = get_user_model().objects.all()
+    lookup_field = "slug"
+    serializer_class = CustomUserDetailsSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
 
 
 ############################### profile section ###############################
 
-# Note: there is no need to be able to get all profiles, this is just for test purpose
-# i.e. ProfileListAPIView is irrelevant
+# Note: can get the profile PK from the user view and can edit the profile, or get
+# a users detailed profile.
 
-class ProfileListAPIView(APIView):
-    '''
-    gets all the profiles in the database
-    '''
-    def get(self, request):
-        profile = Profile.objects.all()
-        serializer = ProfileSerializer(profile, many=True)
-        return Response(serializer.data)
-
-
-class ProfileDetailAPIView(APIView):
+class ProfileRetriveUpdateAPIView(generics.RetrieveUpdateAPIView):
     '''
     gets a particular profile in the database and can edit
-    TO-Do:
-    customize the permission to is object owner or read only
+    if owned by the user
     '''
-    permission_classes = [IsAuthenticated]
+    queryset = Profile.objects.all()
+    serializer_class = ProfileDetailedSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
 
 
-    def get_object(self, pk):
-        profile = get_object_or_404(Profile, pk=pk)
-        return profile
+############################### skill section ###############################
+# Note: to be abel to add a skill by the superuser/AdminUser
+# to also be able to get all skills in the data base
 
-    def get(self, request, pk):
-        profile = self.get_object(pk)
-        serializer = ProfileSerializer(profile)
-        return Response(serializer.data)
-
-    def put(self, request, pk):
-        profile = self.get_object(pk)
-        serializer = ProfileSerializer(profile, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class SkillListAPIView(generics.ListCreateAPIView):
+    '''
+    gets all skills in the database
+    '''
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
