@@ -10,7 +10,9 @@ from .views import (ConfirmEmailView,
                     ListUsersView,
                     UserRetriveAPIView,
                     ProfileRetriveUpdateAPIView,
-                    SkillListAPIView)
+                    ProfileSkillRUAPIView,
+                    SkillListAPIView,
+                    UserFollowAPIView)
 
 
 urlpatterns = [
@@ -26,7 +28,9 @@ urlpatterns = [
     path('password/reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('users/', ListUsersView.as_view(), name='list-users'),
     path("users/<slug:slug>/", UserRetriveAPIView.as_view(), name="users-detail"),
+    path("users/<slug:slug>/follow/", UserFollowAPIView.as_view(), name="users-follow"),
     # To get the authenticated user's own object, its provided by djago-rest-auth using this route: 'rest-auth/user'
     path("profile/<int:pk>/", ProfileRetriveUpdateAPIView.as_view(), name="profile-detail"),
+    path("profile/<int:pk>/skills/", ProfileSkillRUAPIView.as_view(), name="profile-skill-edit"),
     path("skills/", SkillListAPIView.as_view(), name="skills"),
 ]

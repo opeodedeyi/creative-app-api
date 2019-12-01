@@ -111,6 +111,10 @@ class UserFollowing(models.Model):
     '''
     the created model shows info about when the person started following the user
     '''
-    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="follows", null=False, blank=False, on_delete=models.DO_NOTHING)
-    followers = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="followed_by", null=False, blank=False, on_delete=models.DO_NOTHING)
-    created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+    following = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="follows", blank=True)
+    # followers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="followed_by", blank=True)
+    followed_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.fullname

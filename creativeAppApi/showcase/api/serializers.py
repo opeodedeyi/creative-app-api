@@ -4,7 +4,7 @@ from accounts.api.serializers import UserSerializer
 
 
 class ReplySerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
     created_at = serializers.SerializerMethodField(read_only=True)
     likes_count = serializers.SerializerMethodField(read_only=True)
     user_has_voted = serializers.SerializerMethodField(read_only=True)
@@ -25,7 +25,7 @@ class ReplySerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
     created_at = serializers.SerializerMethodField(read_only=True)
     likes_count = serializers.SerializerMethodField(read_only=True)
     user_has_voted = serializers.SerializerMethodField(read_only=True)
@@ -46,7 +46,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class ShowcaseSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
     created_on = serializers.SerializerMethodField(read_only=True)
     likes_count = serializers.SerializerMethodField(read_only=True)
     user_has_voted = serializers.SerializerMethodField(read_only=True)
@@ -72,7 +72,7 @@ class ShowcaseSerializer(serializers.ModelSerializer):
 
 
 class ShowcaseDetaiedSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
     voters = UserSerializer(read_only=True, many=True)
     created_on = serializers.SerializerMethodField(read_only=True)
     likes_count = serializers.SerializerMethodField(read_only=True)

@@ -21,8 +21,10 @@ from django.db.models import Q
 from .serializers import (CustomUserDetailsSerializer, 
                             ProfileSerializer, 
                             ProfileDetailedSerializer,
-                            SkillSerializer)
-from accounts.models import Profile, Skill
+                            ProfileSkillEditSerializer,
+                            SkillSerializer,
+                            UserFollowingSerializer)
+from accounts.models import Profile, Skill, UserFollowing
 
 
 ############################### user authentication section ###############################
@@ -112,11 +114,20 @@ class ProfileRetriveUpdateAPIView(generics.RetrieveUpdateAPIView):
     '''
     queryset = Profile.objects.all()
     serializer_class = ProfileDetailedSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
+    permission_classes = [IsUserOrReadOnly]
+
+
+class ProfileSkillRUAPIView(generics.RetrieveUpdateAPIView):
+    '''
+    to edit the skills of the user alone
+    '''
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSkillEditSerializer
+    permission_classes = [IsUserOrReadOnly]
 
 
 ############################### skill section ###############################
-# Note: to be abel to add a skill by the superuser/AdminUser
+# Note: to be able to add a skill by the superuser/AdminUser
 # to also be able to get all skills in the data base
 
 class SkillListAPIView(generics.ListCreateAPIView):
@@ -126,3 +137,23 @@ class SkillListAPIView(generics.ListCreateAPIView):
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
     permission_classes = [IsAdminUserOrReadOnly]
+
+
+############################### User Follow section ###############################
+# To be able to follow or unfollow a user
+
+class UserFollowAPIView(APIView):
+    '''
+    follow users and can unfollow users
+    '''
+    serializer_class = UserFollowingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        user = get_user_model().objects.get("slug")
+        user.objects.delete(user_id=user, following_user_id=user)
+
+    def post(self, request, pk):
+        user = UserFollowing.objects.get(user=request.user)  #this is the user that wants to follow someone
+        who_to_follow = UserFollowing.objects.get("slug")  #i hope the slug is the user to be followed thoo ..user being followed
+        user.followers.add(who_to_follow)
