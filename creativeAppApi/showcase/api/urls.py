@@ -5,7 +5,7 @@ from . import views as qv
 
 
 urlpatterns = [
-    path("", qv.showcaseCreateViewSet.as_view(), name="showcase-create"),
+    path("", qv.showcaseListCreateViewSet.as_view(), name="showcase-list-create"),
     path("<slug:slug>/", qv.showcaseRUDViewSet.as_view(), name="showcase-detail"),
     path("<slug:slug>/like/", qv.ShowcaseLikeAPIView.as_view(), name="showcase-like"),
     path("<slug:slug>/comment/", qv.CommentCreateAPIView.as_view(), name="comment-create"),

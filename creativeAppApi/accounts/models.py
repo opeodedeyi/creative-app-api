@@ -3,37 +3,38 @@ from django.db import models
 from django.utils import timezone
 from datetime import date
 from django.conf import settings
+import enum
 
 
 class UserManager(BaseUserManager):
 
-  def _create_user(self, email, fullname, password, is_staff, is_superuser, **extra_fields):
-    if not email:
-        raise ValueError('Users must have an email address')
-    now = timezone.now()
-    email = self.normalize_email(email)
-    fullname = fullname
-    user = self.model(
-        email=email,
-        fullname=fullname,
-        is_staff=is_staff, 
-        is_active=True,
-        is_superuser=is_superuser, 
-        last_login=now,
-        date_joined=now, 
-        **extra_fields
-    )
-    user.set_password(password)
-    user.save(using=self._db)
-    return user
+    def _create_user(self, email, fullname, password, is_staff, is_superuser, **extra_fields):
+        if not email:
+            raise ValueError('Users must have an email address')
+        now = timezone.now()
+        email = self.normalize_email(email)
+        fullname = fullname
+        user = self.model(
+            email=email,
+            fullname=fullname,
+            is_staff=is_staff,
+            is_active=True,
+            is_superuser=is_superuser,
+            last_login=now,
+            date_joined=now,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-  def create_user(self, email, fullname, password, **extra_fields):
-    return self._create_user(email, fullname, password, False, False, **extra_fields)
+    def create_user(self, email, fullname, password, **extra_fields):
+        return self._create_user(email, fullname, password, False, False, **extra_fields)
 
-  def create_superuser(self, email, fullname, password, **extra_fields):
-    user=self._create_user(email, fullname, password, True, True, **extra_fields)
-    user.save(using=self._db)
-    return user
+    def create_superuser(self, email, fullname, password, **extra_fields):
+        user = self._create_user(email, fullname, password, True, True, **extra_fields)
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -46,7 +47,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
-    
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['fullname']
@@ -55,6 +55,63 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    def follow_a_user(self, user_to_follow):
+        # find user by slug
+        try:
+            user_to_follow = User.objects.get(slug=user_to_follow)
+        except:
+            return False, 'User not found'
+
+        if user_to_follow != self:
+            FollowLog.objects.create(
+                user=user_to_follow,
+                followed_by=self,
+                status=FollowStatus.following.value
+            )
+            return True, 'Follow Successful'
+        else:
+            return False, 'Cannot follow oneself'
+
+    def unfollow_a_user(self, user_to_unfollow):
+        # find user by slug
+        try:
+            user_to_unfollow = User.objects.get(slug=user_to_unfollow)
+        except:
+            return False, 'User not found'
+
+        if user_to_unfollow != self:
+            try:
+                log = FollowLog.objects.get(
+                    user=user_to_unfollow,
+                    followed_by=self,
+                )
+                log.set_as_unfollowed()
+                return True, 'UnFollow Successful'
+            except Exception as e:
+                return False, 'User doesnt follow the specified user' if 'exist' in e else e
+        else:
+            return False, 'Cannot unfollow oneself'
+
+    def get_followers(self, slug):
+        try:
+           result = (log.followed_by.slug for log in (User.objects.get(slug=slug)).followers.all())
+        except Exception:
+            return '400', None
+        return '200',  result
+
+    def get_followers_count(self, slug):
+        return (User.objects.get(slug=slug)).followers.all().count()
+
+    def get_followed_users(self, slug):
+        try:
+           result = (log.user.slug for log in (User.objects.get(slug=slug)).following.all())
+        except Exception:
+            return '400', None
+        return '200',  result
+
+    def get_followed_users_count(self):
+        return self.following.all().count()
 
 
 class Skill(models.Model):
@@ -67,17 +124,18 @@ class Skill(models.Model):
         return self.name
 
 
-SEX= (
+SEX = (
     ('M', 'Male'),
     ('F', 'Female'),
 )
 
-BODYTYPE= (
+BODYTYPE = (
     ('Slim', 'Slim'),
     ('Average', 'Average'),
     ('Athletic', 'Athletic'),
     ('Heavyset', 'Heavyset'),
 )
+
 
 class Profile(models.Model):
     '''
@@ -100,21 +158,60 @@ class Profile(models.Model):
     feet = models.PositiveIntegerField(blank=True, null=True)
     inches = models.PositiveIntegerField(blank=True, null=True)
     lives_in = models.CharField(max_length=50, blank=True, null=True)
-    updated_on = models.DateTimeField(auto_now_add=True)
-    
+    updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.user.fullname
 
 
-class UserFollowing(models.Model):
-    '''
-    the created model shows info about when the person started following the user
-    '''
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
-    following = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="follows", blank=True)
-    # followers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="followed_by", blank=True)
+class FollowStatus(enum.Enum):
+    following = 'following'
+    unfollowed = 'unfollowed'
+    blocked = 'blocked'
+
+
+FOLLOW_STATUS = (
+    ('following', 'following'),
+    ('unfollowed', 'unfollowed'),
+    ('blocked', 'blocked'),
+)
+
+
+class FollowLog(models.Model):
+    """
+        users is intentionally using a related name of follwers sp we can query all data via the related_query_manager
+
+        Azeem is the main guy,
+        Jide is following azeem
+
+        azeem.followers.all()
+
+        The followed by uses a following related name
+
+        jide.following.all()
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='followers')
+    followed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                    related_name='following', null=True)
     followed_on = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(choices=FOLLOW_STATUS, default=FollowStatus.following.value, max_length=30)
+    updated_on = models.DateTimeField(auto_now=True)
+    unfollowed_on = models.DateTimeField(null=True)
+    blocked_on = models.DateTimeField(null=True)
 
     def __str__(self):
-        return self.user.fullname
+        return "{} followed by {} ".format(self.user, self.followed_by)
+
+    def set_as_followed(self):
+        self.status = FollowStatus.following.value
+        self.save()
+
+    def set_as_blocked(self):
+        self.status = FollowStatus.blocked.value
+        self.blocked_on = timezone.now()
+        self.save()
+
+    def set_as_unfollowed(self):
+        self.status = FollowStatus.unfollowed.value
+        self.unfollowed_on = timezone.now()
+        self.save()

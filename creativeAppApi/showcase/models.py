@@ -16,8 +16,8 @@ class Showcase(models.Model):
     skill_type = models.ForeignKey(Skill, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, related_name="Showcases")
     content = models.TextField(null=True)
-    created_on = models.DateTimeField(auto_now=True)
-    updated_on = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="upvotes")
     slug = models.SlugField(max_length=255, unique=True)
 

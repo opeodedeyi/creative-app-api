@@ -11,9 +11,9 @@ from ..models import Showcase, Comment, ReplyComment
 
 
 # SHOWCASE APIView
-class showcaseCreateViewSet(generics.ListCreateAPIView):
+class showcaseListCreateViewSet(generics.ListCreateAPIView):
     '''
-    Create showcases view. user must be logged in to do this
+    Create list and showcases view. user must be logged in to do this
     '''
     queryset = Showcase.objects.all()
     serializer_class = ShowcaseSerializer

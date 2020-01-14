@@ -22,9 +22,8 @@ from .serializers import (CustomUserDetailsSerializer,
                             ProfileSerializer, 
                             ProfileDetailedSerializer,
                             ProfileSkillEditSerializer,
-                            SkillSerializer,
-                            UserFollowingSerializer)
-from accounts.models import Profile, Skill, UserFollowing
+                            SkillSerializer)
+from accounts.models import Profile, Skill
 
 
 ############################### user authentication section ###############################
@@ -102,6 +101,69 @@ class UserRetriveAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
 
 
+############################### following and unfollowing users ###############################
+class FollowAUserView(APIView):
+    '''
+    Follow a user
+    '''
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request,slug):
+        response = {
+            'status':None,
+            'detail':None
+        }
+        response['status'],response['detail'] = request.user.follow_a_user(slug)
+        return Response(response)
+
+
+class UnFollowAUserView(APIView):
+    '''
+    unfollow a user
+    '''
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request,slug):
+        response = {
+            'status':None,
+            'detail':None
+        }
+        response['status'],response['detail'] = request.user.unfollow_a_user(slug)
+        return Response(response)
+
+
+############################### follower and following count ###############################
+class UserFollowerView(APIView):
+    '''
+    Gets all the followers to a user
+    '''
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        response = {
+            'status':None,
+            'detail':None
+        }
+        print(request.user.get_followers(slug))
+        response['status'], response['detail'] = request.user.get_followers(slug)
+        return Response(response)
+
+
+class UserFollowingView(APIView):
+    '''
+    Gets all the users a user follows
+    '''
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        response = {
+            'status':None,
+            'detail':None
+        }
+        response['status'], response['detail'] = request.user.get_followed_users(slug)
+        return Response(response)
+
+
 ############################### profile section ###############################
 
 # Note: can get the profile PK from the user view and can edit the profile, or get
@@ -138,22 +200,3 @@ class SkillListAPIView(generics.ListCreateAPIView):
     serializer_class = SkillSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
-
-############################### User Follow section ###############################
-# To be able to follow or unfollow a user
-
-class UserFollowAPIView(APIView):
-    '''
-    follow users and can unfollow users
-    '''
-    serializer_class = UserFollowingSerializer
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, pk):
-        user = get_user_model().objects.get("slug")
-        user.objects.delete(user_id=user, following_user_id=user)
-
-    def post(self, request, pk):
-        user = UserFollowing.objects.get(user=request.user)  #this is the user that wants to follow someone
-        who_to_follow = UserFollowing.objects.get("slug")  #i hope the slug is the user to be followed thoo ..user being followed
-        user.followers.add(who_to_follow)

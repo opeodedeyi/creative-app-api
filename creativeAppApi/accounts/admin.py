@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import User, Profile, Skill
+from .models import User, Profile, Skill, FollowLog
 
 
 class UserAdmin(BaseUserAdmin):
@@ -40,3 +40,4 @@ class ProfileAdmin(admin.ModelAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile)
 admin.site.register(Skill)
+admin.site.register(FollowLog)

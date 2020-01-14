@@ -2,7 +2,8 @@ from rest_framework import serializers
 from rest_auth.registration.serializers import RegisterSerializer
 from rest_auth.serializers import LoginSerializer
 from django.contrib.auth import get_user_model
-from accounts.models import Profile, Skill, UserFollowing
+from accounts.models import Profile, Skill
+from datetime import date
 
 
 #################### skills serializer ####################
@@ -38,12 +39,20 @@ class ProfileDetailedSerializer(serializers.ModelSerializer):
     '''
     skills = SkillSerializer(many=True, read_only=True)
     user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    age = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Profile
         fields = "__all__"
 
         read_only_fields = ('pk', 'user', 'skills')
+    
+    def get_age(self, instance):
+        today = date.today()
+        dob = instance.date_of_birth
+        if dob==None:
+            return None
+        return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
 
 class ProfileSkillEditSerializer(serializers.ModelSerializer):
@@ -57,34 +66,33 @@ class ProfileSkillEditSerializer(serializers.ModelSerializer):
 
 
 #################### user following serializer ####################
-class UserFollowingSerializer(serializers.ModelSerializer):
-    '''
-    a user following serializer that gets the followers snd following
-    count, will also check if the user is already followed
-    '''
-    user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
-    following_count = serializers.SerializerMethodField(read_only=True)
-    # followers_count = serializers.SerializerMethodField(read_only=True)
-    user_is_following = serializers.SerializerMethodField(read_only=True)
-    followed_on = serializers.SerializerMethodField(read_only=True)
+# class UserFollowingSerializer(serializers.ModelSerializer):
+#     '''
+#     a user following serializer that gets the followers snd following
+#     count, will also check if the user is already followed
+#     '''
+#     user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+#     following_count = serializers.SerializerMethodField(read_only=True)
+#     # followers_count = serializers.SerializerMethodField(read_only=True)
+#     user_is_following = serializers.SerializerMethodField(read_only=True)
+#     followed_on = serializers.SerializerMethodField(read_only=True)
 
-    class Meta:
-        model = UserFollowing
-        fields = "__all__"
+#     class Meta:
+#         model = UserFollowing
+#         fields = "__all__"
 
-    def get_followed_on(self, instance):
-        return instance.followed_on.strftime("%d %B, %Y")
+#     def get_followed_on(self, instance):
+#         return instance.followed_on.strftime("%d %B, %Y")
 
-    def get_following_count(self, instance):
-        return instance.following.count()
+#     def get_following_count(self, instance):
+#         return instance.following.count()
 
-    # def get_followers_count(self, instance):
-    #     return instance.followers.count()
+#     # def get_followers_count(self, instance):
+#     #     return instance.followers.count()
 
-    def get_user_is_following(self, instance):
-        request = self.context.get("request")
-        return instance.following.filter(slug=request.user.slug).exists()
-
+#     def get_user_is_following(self, instance):
+#         request = self.context.get("request")
+#         return instance.following.filter(slug=request.user.slug).exists()
 
 ###################### user serializer ######################
 User = get_user_model()
