@@ -3,6 +3,7 @@ from rest_auth.registration.serializers import RegisterSerializer
 from rest_auth.serializers import LoginSerializer
 from django.contrib.auth import get_user_model
 from accounts.models import Profile, Skill
+from showcase.api.serializers import ShowcaseSlugSerializer
 from datetime import date
 
 
@@ -65,35 +66,6 @@ class ProfileSkillEditSerializer(serializers.ModelSerializer):
         fields = ('skills',)
 
 
-#################### user following serializer ####################
-# class UserFollowingSerializer(serializers.ModelSerializer):
-#     '''
-#     a user following serializer that gets the followers snd following
-#     count, will also check if the user is already followed
-#     '''
-#     user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
-#     following_count = serializers.SerializerMethodField(read_only=True)
-#     # followers_count = serializers.SerializerMethodField(read_only=True)
-#     user_is_following = serializers.SerializerMethodField(read_only=True)
-#     followed_on = serializers.SerializerMethodField(read_only=True)
-
-#     class Meta:
-#         model = UserFollowing
-#         fields = "__all__"
-
-#     def get_followed_on(self, instance):
-#         return instance.followed_on.strftime("%d %B, %Y")
-
-#     def get_following_count(self, instance):
-#         return instance.following.count()
-
-#     # def get_followers_count(self, instance):
-#     #     return instance.followers.count()
-
-#     def get_user_is_following(self, instance):
-#         request = self.context.get("request")
-#         return instance.following.filter(slug=request.user.slug).exists()
-
 ###################### user serializer ######################
 User = get_user_model()
 
@@ -133,11 +105,12 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
     '''
     profiles = ProfileSerializer(read_only=True, many=True)
     slug = serializers.SlugField(read_only=True)
+    showcase = ShowcaseSlugSerializer(read_only=True, many=True)
 
     class Meta:
         model = User
-        fields = ('pk', 'email', 'fullname', 'profiles', 'slug')
-        read_only_fields = ('email', 'fullname', 'profiles', 'slug')
+        fields = ('pk', 'email', 'fullname', 'profiles', 'slug', 'showcase')
+        read_only_fields = ('email', 'fullname', 'profiles', 'slug', 'showcase')
 
 
 class UserSerializer(serializers.ModelSerializer):

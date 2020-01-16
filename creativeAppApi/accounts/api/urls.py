@@ -15,7 +15,8 @@ from .views import (ConfirmEmailView,
                     FollowAUserView,
                     UnFollowAUserView,
                     UserFollowerView,
-                    UserFollowingView)
+                    UserFollowingView,
+                    followLogCount)
 
 
 urlpatterns = [
@@ -68,6 +69,10 @@ urlpatterns = [
     path("users/<slug:slug>/following/",
         UserFollowingView.as_view(),
         name="user-following"),
+
+    path("users/<slug:slug>/follow-count/",
+        followLogCount.as_view(),
+        name="user-follow-count"),
 
     path("profile/<int:pk>/", 
         ProfileRetriveUpdateAPIView.as_view(), 

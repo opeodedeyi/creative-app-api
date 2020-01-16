@@ -108,7 +108,7 @@ class FollowAUserView(APIView):
     '''
     permission_classes = [IsAuthenticated]
 
-    def get(self, request,slug):
+    def get(self, request, slug):
         response = {
             'status':None,
             'detail':None
@@ -123,7 +123,7 @@ class UnFollowAUserView(APIView):
     '''
     permission_classes = [IsAuthenticated]
 
-    def get(self, request,slug):
+    def get(self, request, slug):
         response = {
             'status':None,
             'detail':None
@@ -132,7 +132,7 @@ class UnFollowAUserView(APIView):
         return Response(response)
 
 
-############################### follower and following count ###############################
+############################### Get followers and following ###############################
 class UserFollowerView(APIView):
     '''
     Gets all the followers to a user
@@ -142,10 +142,10 @@ class UserFollowerView(APIView):
     def get(self, request, slug):
         response = {
             'status':None,
-            'detail':None
+            'followers':None
         }
         print(request.user.get_followers(slug))
-        response['status'], response['detail'] = request.user.get_followers(slug)
+        response['status'], response['followers'] = request.user.get_followers(slug)
         return Response(response)
 
 
@@ -158,9 +158,24 @@ class UserFollowingView(APIView):
     def get(self, request, slug):
         response = {
             'status':None,
-            'detail':None
+            'following':None
         }
-        response['status'], response['detail'] = request.user.get_followed_users(slug)
+        response['status'], response['following'] = request.user.get_followed_users(slug)
+        return Response(response)
+
+class followLogCount(APIView):
+    '''
+    Get all the followers and following count of a user
+    '''
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        response = {
+            'status':None,
+            'followers_count':None,
+            'following_count':None
+        }
+        response['status'], response['followers_count'], response['following_count'] = request.user.get_users_follow_count(slug)
         return Response(response)
 
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from ..models import Showcase, Comment, ReplyComment
-from accounts.api.serializers import UserSerializer
+# from accounts.api.serializers import UserSerializer
 from django.utils import timezone
 import math
 
@@ -270,3 +270,11 @@ class ShowcaseDetaiedSerializer(serializers.ModelSerializer):
             if years == 1:
                 return str(years) + " year ago"
             return str(years) + " years ago"
+
+
+class ShowcaseSlugSerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField(read_only=True)
+
+    class Meta:
+        model = Showcase
+        fields = ['slug',]

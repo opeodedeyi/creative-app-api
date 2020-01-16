@@ -7,7 +7,9 @@ import enum
 
 
 class UserManager(BaseUserManager):
-
+    """
+    The User Manager
+    """
     def _create_user(self, email, fullname, password, is_staff, is_superuser, **extra_fields):
         if not email:
             raise ValueError('Users must have an email address')
@@ -64,12 +66,20 @@ class User(AbstractBaseUser, PermissionsMixin):
             return False, 'User not found'
 
         if user_to_follow != self:
-            FollowLog.objects.create(
-                user=user_to_follow,
-                followed_by=self,
-                status=FollowStatus.following.value
-            )
-            return True, 'Follow Successful'
+            try:
+                log = FollowLog.objects.get(
+                    user=user_to_follow,
+                    followed_by=self,
+                )
+                log.set_as_followed()
+                return True, 'Refollow successful'
+            except:
+                FollowLog.objects.create(
+                    user=user_to_follow,
+                    followed_by=self,
+                    status=FollowStatus.following.value
+                )
+                return True, 'Follow Successful'
         else:
             return False, 'Cannot follow oneself'
 
@@ -95,23 +105,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_followers(self, slug):
         try:
-           result = (log.followed_by.slug for log in (User.objects.get(slug=slug)).followers.all())
+           result = (log.followed_by.slug for log in (User.objects.get(slug=slug)).followers.all().filter(status='following'))
         except Exception:
             return '400', None
-        return '200',  result
-
-    def get_followers_count(self, slug):
-        return (User.objects.get(slug=slug)).followers.all().count()
+        return '200', result
 
     def get_followed_users(self, slug):
         try:
-           result = (log.user.slug for log in (User.objects.get(slug=slug)).following.all())
+           result = (log.user.slug for log in (User.objects.get(slug=slug)).following.all().filter(status='following'))
         except Exception:
             return '400', None
-        return '200',  result
-
-    def get_followed_users_count(self):
-        return self.following.all().count()
+        return '200', result
+    
+    def get_users_follow_count(self, slug):
+        followers_count = (User.objects.get(slug=slug)).followers.all().filter(status='following').count()
+        following_count = (User.objects.get(slug=slug)).following.all().filter(status='following').count()
+        return '200', followers_count, following_count
 
 
 class Skill(models.Model):
@@ -122,19 +131,6 @@ class Skill(models.Model):
 
     def __str__(self):
         return self.name
-
-
-SEX = (
-    ('M', 'Male'),
-    ('F', 'Female'),
-)
-
-BODYTYPE = (
-    ('Slim', 'Slim'),
-    ('Average', 'Average'),
-    ('Athletic', 'Athletic'),
-    ('Heavyset', 'Heavyset'),
-)
 
 
 class Profile(models.Model):
@@ -148,6 +144,19 @@ class Profile(models.Model):
     - Need to add education also as a foreign field
     - Add follow functionality
     '''
+
+    SEX = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+
+    BODYTYPE = (
+        ('Slim', 'Slim'),
+        ('Average', 'Average'),
+        ('Athletic', 'Athletic'),
+        ('Heavyset', 'Heavyset'),
+    )
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profiles')
     date_of_birth = models.DateField(blank=True, verbose_name="DOB", null=True)
     bio = models.TextField(max_length=500, blank=True, null=True)
