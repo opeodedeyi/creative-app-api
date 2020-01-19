@@ -2,10 +2,12 @@ from rest_framework import serializers
 from rest_auth.registration.serializers import RegisterSerializer
 from rest_auth.serializers import LoginSerializer
 from django.contrib.auth import get_user_model
-from accounts.models import Profile, Skill
+from accounts.models import Profile, Skill, FollowLog
 from showcase.api.serializers import ShowcaseSlugSerializer
 from datetime import date
 
+
+User = get_user_model()
 
 #################### skills serializer ####################
 class SkillSerializer(serializers.ModelSerializer):
@@ -17,7 +19,35 @@ class SkillSerializer(serializers.ModelSerializer):
         model = Skill
         fields = ('name',)
 
-        
+
+#################### FollowLog serializers ####################
+
+##### follower serializers
+class FollowerSerializer(serializers.ModelSerializer):
+    '''
+    Allows people to view follower of a user
+    '''
+    followed_by = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+
+    class Meta:
+        model = FollowLog
+        fields = ('followed_by',)
+        read_only_fields = ('followed_by',)
+
+
+##### follower serializers
+class FollowingSerializer(serializers.ModelSerializer):
+    '''
+    Allows people to the users a particular person follows
+    '''
+    user = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+
+    class Meta:
+        model = FollowLog
+        fields = ('user',)
+        read_only_fields = ('user',)
+
+
 #################### profile serializer ####################
 class ProfileSerializer(serializers.ModelSerializer):
     '''
@@ -67,8 +97,6 @@ class ProfileSkillEditSerializer(serializers.ModelSerializer):
 
 
 ###################### user serializer ######################
-User = get_user_model()
-
 class LoginSerializer(LoginSerializer):
     '''
     a custom serializer that overides the default rest-auth, and for
@@ -104,13 +132,44 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
     the user to view his own data
     '''
     profiles = ProfileSerializer(read_only=True, many=True)
-    slug = serializers.SlugField(read_only=True)
     showcase = ShowcaseSlugSerializer(read_only=True, many=True)
+    followers_count = serializers.SerializerMethodField(read_only=True)
+    following_count = serializers.SerializerMethodField(read_only=True)
+    am_i_following = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('pk', 'email', 'fullname', 'profiles', 'slug', 'showcase')
+        fields = ('pk','email', 'fullname', 'profiles', 'slug', 'showcase', 'followers_count', 'following_count', 'am_i_following')
         read_only_fields = ('email', 'fullname', 'profiles', 'slug', 'showcase')
+
+    def get_followers_count(self, instance):
+        return instance.followers.all().filter(status='following').count()
+
+    def get_following_count(self, instance):
+        return instance.following.all().filter(status='following').count()
+
+    def get_am_i_following(self, instance):
+        '''
+        returns =
+            (
+                Myself- when the user i am checking if i follow, is myself
+                following- when i am following user
+                not following- when user isnt following or when not logged in
+            )
+        '''
+        try:
+            request = self.context.get("request")
+            user = request.user
+            if user==instance:
+                return 'Myself'
+            else:
+                # return instance.followers.filter(status='following').filter(pk=user.pk).exists()
+                qs = request.user.followers.filter(status='following').filter(pk=instance.pk)
+                if qs.exists():
+                    return "following"
+                return "not yet"
+        except:
+            return "not following"
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -119,8 +178,16 @@ class UserSerializer(serializers.ModelSerializer):
     to chain to another serializer
     '''
     slug = serializers.SlugField(read_only=True)
+    followers_count = serializers.SerializerMethodField(read_only=True)
+    following_count = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('pk', 'email', 'fullname', 'slug')
-        read_only_fields = ('email', 'fullname', 'slug')
+        fields = ('email', 'fullname', 'slug', 'followers_count', 'following_count')
+        read_only_fields = ('email', 'fullname', 'slug', 'followers_count', 'following_count')
+    
+    def get_followers_count(self, instance):
+        return instance.followers.all().filter(status='following').count()
+
+    def get_following_count(self, instance):
+        return instance.following.all().filter(status='following').count()

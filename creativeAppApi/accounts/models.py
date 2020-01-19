@@ -103,25 +103,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             return False, 'Cannot unfollow oneself'
 
-    def get_followers(self, slug):
-        try:
-           result = (log.followed_by.slug for log in (User.objects.get(slug=slug)).followers.all().filter(status='following'))
-        except Exception:
-            return '400', None
-        return '200', result
-
-    def get_followed_users(self, slug):
-        try:
-           result = (log.user.slug for log in (User.objects.get(slug=slug)).following.all().filter(status='following'))
-        except Exception:
-            return '400', None
-        return '200', result
-    
-    def get_users_follow_count(self, slug):
-        followers_count = (User.objects.get(slug=slug)).followers.all().filter(status='following').count()
-        following_count = (User.objects.get(slug=slug)).following.all().filter(status='following').count()
-        return '200', followers_count, following_count
-
 
 class Skill(models.Model):
     name = models.CharField(max_length=300)

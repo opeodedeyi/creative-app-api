@@ -18,12 +18,15 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from rest_auth.registration.views import SocialLoginView
 from django.http import HttpResponseRedirect
 from django.db.models import Q
-from .serializers import (CustomUserDetailsSerializer, 
+from .serializers import (CustomUserDetailsSerializer,
+                            UserSerializer,
                             ProfileSerializer, 
                             ProfileDetailedSerializer,
                             ProfileSkillEditSerializer,
-                            SkillSerializer)
-from accounts.models import Profile, Skill
+                            SkillSerializer,
+                            FollowerSerializer,
+                            FollowingSerializer)
+from accounts.models import Profile, Skill, FollowLog
 
 
 ############################### user authentication section ###############################
@@ -91,14 +94,20 @@ class ListUsersView(APIView):
         return Response(serializer.data)
 
 
-class UserRetriveAPIView(generics.RetrieveAPIView):
+class UserRetriveAPIView(APIView):
     '''
     Gets a particular user in the database using the slug as the lookup
     '''
-    queryset = get_user_model().objects.all()
-    lookup_field = "slug"
     serializer_class = CustomUserDetailsSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
+
+    def get(self, request, slug):
+        a_user = get_object_or_404(User, slug=slug)
+
+        serializer_context = {"request": request}
+        serializer = self.serializer_class(a_user, context=serializer_context)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 ############################### following and unfollowing users ###############################
@@ -140,13 +149,10 @@ class UserFollowerView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, slug):
-        response = {
-            'status':None,
-            'followers':None
-        }
-        print(request.user.get_followers(slug))
-        response['status'], response['followers'] = request.user.get_followers(slug)
-        return Response(response)
+        user = User.objects.get(slug=slug)
+        followers = user.followers.all().filter(status='following').order_by("-followed_on")
+        serializer = FollowerSerializer(followers, many=True)
+        return Response(serializer.data)
 
 
 class UserFollowingView(APIView):
@@ -156,27 +162,10 @@ class UserFollowingView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, slug):
-        response = {
-            'status':None,
-            'following':None
-        }
-        response['status'], response['following'] = request.user.get_followed_users(slug)
-        return Response(response)
-
-class followLogCount(APIView):
-    '''
-    Get all the followers and following count of a user
-    '''
-    permission_classes = [AllowAny]
-
-    def get(self, request, slug):
-        response = {
-            'status':None,
-            'followers_count':None,
-            'following_count':None
-        }
-        response['status'], response['followers_count'], response['following_count'] = request.user.get_users_follow_count(slug)
-        return Response(response)
+        user = User.objects.get(slug=slug)
+        following = user.following.all().filter(status='following').order_by("-followed_on")
+        serializer = FollowingSerializer(following, many=True)
+        return Response(serializer.data)
 
 
 ############################### profile section ###############################

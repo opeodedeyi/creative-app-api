@@ -23,6 +23,18 @@ class showcaseListCreateViewSet(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
+# class ListAUsersShowcasesViewSet(generics.ListAPIView):
+#     '''
+#     Can see all the showcases of a particular user
+#     '''
+#     serializer_class = CommentSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     def get_queryset(self, userslug):
+#         kwarg_slug = self.kwargs.get("slug")
+#         return Comment.objects.filter(showcase__slug=kwarg_slug).order_by("-created_at")
+
+
 class showcaseRUDViewSet(generics.RetrieveUpdateDestroyAPIView):
     '''
     Retrieve, update and destroy showcases view. user must be 
