@@ -139,7 +139,7 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('pk','email', 'fullname', 'profiles', 'slug', 'showcase', 'followers_count', 'following_count', 'am_i_following')
+        fields = ('email', 'fullname', 'profiles', 'slug', 'showcase', 'followers_count', 'following_count', 'am_i_following')
         read_only_fields = ('email', 'fullname', 'profiles', 'slug', 'showcase')
 
     def get_followers_count(self, instance):
@@ -152,24 +152,23 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
         '''
         returns =
             (
-                Myself- when the user i am checking if i follow, is myself
-                following- when i am following user
-                not following- when user isnt following or when not logged in
+                Me- when the user i am checking if i follow, is myself
+                Yes- when i am following user
+                No- when user isnt following or when not logged in
             )
         '''
         try:
             request = self.context.get("request")
-            user = request.user
-            if user==instance:
-                return 'Myself'
+            if request.user.slug==instance.slug:
+                return 'Me'
             else:
-                # return instance.followers.filter(status='following').filter(pk=user.pk).exists()
-                qs = request.user.followers.filter(status='following').filter(pk=instance.pk)
-                if qs.exists():
-                    return "following"
-                return "not yet"
-        except:
-            return "not following"
+                answer = instance.followers.filter(status='following').filter(followed_by=request.user).exists()
+                if answer:
+                    return "Yes"
+                else:
+                    return "No"
+        except Exception as e:
+            return "No"
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -180,10 +179,11 @@ class UserSerializer(serializers.ModelSerializer):
     slug = serializers.SlugField(read_only=True)
     followers_count = serializers.SerializerMethodField(read_only=True)
     following_count = serializers.SerializerMethodField(read_only=True)
+    am_i_following = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('email', 'fullname', 'slug', 'followers_count', 'following_count')
+        fields = ('email', 'fullname', 'slug', 'followers_count', 'following_count', 'am_i_following')
         read_only_fields = ('email', 'fullname', 'slug', 'followers_count', 'following_count')
     
     def get_followers_count(self, instance):
@@ -191,3 +191,25 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_following_count(self, instance):
         return instance.following.all().filter(status='following').count()
+
+    def get_am_i_following(self, instance):
+        '''
+        returns =
+            (
+                Me- when the user i am checking if i follow, is myself
+                Yes- when i am following user
+                No- when user isnt following or when not logged in
+            )
+        '''
+        try:
+            request = self.context.get("request")
+            if request.user.slug==instance.slug:
+                return 'Me'
+            else:
+                answer = instance.followers.filter(status='following').filter(followed_by=request.user).exists()
+                if answer:
+                    return "Yes"
+                else:
+                    return "No"
+        except Exception as e:
+            return "No"

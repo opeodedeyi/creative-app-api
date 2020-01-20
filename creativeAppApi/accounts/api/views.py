@@ -26,6 +26,8 @@ from .serializers import (CustomUserDetailsSerializer,
                             SkillSerializer,
                             FollowerSerializer,
                             FollowingSerializer)
+from showcase.api.serializers import ShowcaseSerializer
+from showcase.models import Showcase
 from accounts.models import Profile, Skill, FollowLog
 
 
@@ -86,11 +88,14 @@ class ListUsersView(APIView):
     '''
     Gets all the users in the database
     '''
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
     def get(self, request):
         user = get_user_model().objects.all()
-        serializer = CustomUserDetailsSerializer(user, many=True)
+
+        serializer_context = {"request": request}
+        serializer = self.serializer_class(user, context=serializer_context, many=True)
         return Response(serializer.data)
 
 
@@ -102,11 +107,10 @@ class UserRetriveAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
 
     def get(self, request, slug):
-        a_user = get_object_or_404(User, slug=slug)
+        user = get_object_or_404(User, slug=slug)
 
         serializer_context = {"request": request}
-        serializer = self.serializer_class(a_user, context=serializer_context)
-
+        serializer = self.serializer_class(user, context=serializer_context)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -204,3 +208,16 @@ class SkillListAPIView(generics.ListCreateAPIView):
     serializer_class = SkillSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
+
+############################### get a users showcases ###############################
+class ListAUsersShowcasesViewSet(generics.ListAPIView):
+    '''
+    List all the showcases of a user
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        kwarg_slug = self.kwargs.get("slug")
+        user = get_object_or_404(User, slug=kwarg_slug)
+        return Showcase.objects.filter(user=user)

@@ -15,7 +15,8 @@ from .views import (ConfirmEmailView,
                     FollowAUserView,
                     UnFollowAUserView,
                     UserFollowerView,
-                    UserFollowingView)
+                    UserFollowingView,
+                    ListAUsersShowcasesViewSet)
 
 urlpatterns = [
     path('verify-email/',
@@ -79,4 +80,9 @@ urlpatterns = [
     path("skills/",
          SkillListAPIView.as_view(),
          name="skills"),
+
+     # Querysets for users
+    path("users/<slug:slug>/showcases/",
+         ListAUsersShowcasesViewSet.as_view(),
+         name="a-users-showcase-list"),
 ]

@@ -1,15 +1,17 @@
+from django.contrib.auth import get_user_model
 from rest_framework import generics, viewsets, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 
 from .permissions import IsUserOrReadOnly
 from .serializers import ShowcaseSerializer, CommentSerializer, ShowcaseDetaiedSerializer, ReplySerializer
 from ..models import Showcase, Comment, ReplyComment
 
 
+User = get_user_model()
 # SHOWCASE APIView
 class showcaseListCreateViewSet(generics.ListCreateAPIView):
     '''
@@ -21,18 +23,6 @@ class showcaseListCreateViewSet(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-
-# class ListAUsersShowcasesViewSet(generics.ListAPIView):
-#     '''
-#     Can see all the showcases of a particular user
-#     '''
-#     serializer_class = CommentSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def get_queryset(self, userslug):
-#         kwarg_slug = self.kwargs.get("slug")
-#         return Comment.objects.filter(showcase__slug=kwarg_slug).order_by("-created_at")
 
 
 class showcaseRUDViewSet(generics.RetrieveUpdateDestroyAPIView):
