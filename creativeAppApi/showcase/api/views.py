@@ -9,6 +9,9 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from .permissions import IsUserOrReadOnly
 from .serializers import ShowcaseSerializer, CommentSerializer, ShowcaseDetaiedSerializer, ReplySerializer
 from ..models import Showcase, Comment, ReplyComment
+from accounts.models import FollowLog
+from django.db.models import Count
+import datetime
 
 
 User = get_user_model()
@@ -215,3 +218,64 @@ class ReplyLikeAPIView(APIView):
         serializer = self.serializer_class(reply, context=serializer_context)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# Querysets
+class MostLikedShowcasesView(generics.ListAPIView):
+    '''
+    Most liked showcases in the website
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Showcase.objects.annotate(like_count=Count('voters')).order_by('-like_count')
+
+
+class MostLikedWeekShowcasesView(generics.ListAPIView):
+    '''
+    Most liked showcases created within the past week
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        last_7_days = datetime.datetime.today() - datetime.timedelta(7)
+        return Showcase.objects.filter(created_on__range=[last_7_days,datetime.datetime.today()]).annotate(like_count=Count('voters')).order_by('-like_count')
+
+
+class MostLikedMonthShowcasesView(generics.ListAPIView):
+    '''
+    Most liked showcases created within the past month
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        last_30_days = datetime.datetime.today() - datetime.timedelta(30)
+        return Showcase.objects.filter(created_on__range=[last_30_days,datetime.datetime.today()]).annotate(like_count=Count('voters')).order_by('-like_count')
+
+
+class MostLikedYearShowcasesView(generics.ListAPIView):
+    '''
+    Most liked showcases created within the past year
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        last_365_days = datetime.datetime.today() - datetime.timedelta(365)
+        return Showcase.objects.filter(created_on__range=[last_365_days,datetime.datetime.today()]).annotate(like_count=Count('voters')).order_by('-like_count')
+
+
+class FollowerShowcasesView(generics.ListAPIView):
+    '''
+    Showcases of people i follow
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        current_user = self.request.user
+        followed_people = FollowLog.objects.filter(followed_by=current_user).filter(status='following').values('user')
+        return Showcase.objects.filter(user__in=followed_people).order_by('-created_on')

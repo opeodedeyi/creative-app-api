@@ -35,7 +35,7 @@ class FollowerSerializer(serializers.ModelSerializer):
         read_only_fields = ('followed_by',)
 
 
-##### follower serializers
+##### following serializers
 class FollowingSerializer(serializers.ModelSerializer):
     '''
     Allows people to the users a particular person follows

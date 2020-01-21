@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from ..models import Showcase, Comment, ReplyComment
-# from accounts.api.serializers import UserSerializer
 from django.utils import timezone
 import math
 
@@ -145,9 +144,6 @@ class ShowcaseSerializer(serializers.ModelSerializer):
         model = Showcase
         exclude = ['voters', 'updated_on', 'id']
 
-    def get_created_on(self, instance):
-        return instance.created_on.strftime("%d %B %Y ; %H:%M:%S %Z")
-
     def get_likes_count(self, instance):
         return instance.voters.count()
 
@@ -158,7 +154,7 @@ class ShowcaseSerializer(serializers.ModelSerializer):
     def get_comment_count(self, instance):
         return instance.comments.count()
 
-    def get_created_when(self, instance):
+    def get_created_on(self, instance):
         now = timezone.now()
         diff = now - instance.created_on
 

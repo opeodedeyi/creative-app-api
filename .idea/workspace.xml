@@ -3,14 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5f441b7b-8010-408d-8eb8-5e0ea08af3a3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/api/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/api/permissions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/api/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/api/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/signals.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/signals.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creativeAppApi/core/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/core/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creativeAppApi/creativeAppApi/backends.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/creativeAppApi/backends.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creativeAppApi/showcase/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/showcase/api/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/creativeAppApi/showcase/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/showcase/api/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -60,12 +54,11 @@
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/creativeAppApi/accounts/api/serializers.py">
+        <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/serializers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="122" column="66" lean-forward="true" selection-start-line="121" selection-start-column="16" selection-end-line="122" selection-end-column="66" />
+            <state relative-caret-position="-255">
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -73,18 +66,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/creativeAppApi/accounts/api/permissions.py">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/creativeAppApi/accounts/api/urls.py">
+        <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="72" column="34" lean-forward="true" selection-start-line="72" selection-start-column="34" selection-end-line="72" selection-end-column="34" />
+            <state relative-caret-position="334">
+              <caret line="228" column="56" selection-start-line="228" selection-start-column="56" selection-end-line="228" selection-end-column="56" />
               <folding>
-                <element signature="e#0#36#0" expanded="true" />
+                <element signature="e#0#46#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -155,13 +143,6 @@
               <item name="creative-app-api" type="b2602c69:ProjectViewProjectNode" />
               <item name="creative-app-api" type="462c0819:PsiDirectoryNode" />
               <item name="creativeAppApi" type="462c0819:PsiDirectoryNode" />
-              <item name="accounts" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="creative-app-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="creative-app-api" type="462c0819:PsiDirectoryNode" />
-              <item name="creativeAppApi" type="462c0819:PsiDirectoryNode" />
               <item name="core" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -175,6 +156,13 @@
               <item name="creative-app-api" type="462c0819:PsiDirectoryNode" />
               <item name="creativeAppApi" type="462c0819:PsiDirectoryNode" />
               <item name="showcase" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="creative-app-api" type="b2602c69:ProjectViewProjectNode" />
+              <item name="creative-app-api" type="462c0819:PsiDirectoryNode" />
+              <item name="creativeAppApi" type="462c0819:PsiDirectoryNode" />
+              <item name="showcase" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="creative-app-api" type="b2602c69:ProjectViewProjectNode" />
@@ -197,6 +185,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/creativeAppApi/creativeAppApi/settings.py" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
@@ -274,11 +263,13 @@
       <workItem from="1579192582443" duration="970000" />
       <workItem from="1579387991037" duration="1878000" />
       <workItem from="1579396904279" duration="844000" />
+      <workItem from="1579487928996" duration="741000" />
+      <workItem from="1579524027481" duration="153000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20443000" />
+    <option name="totallyTimeSpent" value="21337000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -293,7 +284,7 @@
     <frame x="-7" y="-7" width="1550" height="878" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17962466" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18364611" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -327,18 +318,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/creativeAppApi/accounts/api/views.py</url>
-          <line>91</line>
+          <line>94</line>
           <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/creativeAppApi/accounts/api/serializers.py</url>
-          <line>161</line>
-          <option name="timeStamp" value="20" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/creativeAppApi/accounts/api/serializers.py</url>
-          <line>168</line>
-          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -423,13 +404,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="21" column="4" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/creativeAppApi/accounts/api/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
@@ -484,8 +458,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/creativeAppApi/accounts/api/serializers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="122" column="66" lean-forward="true" selection-start-line="121" selection-start-column="16" selection-end-line="122" selection-end-column="66" />
+        <state relative-caret-position="-748">
+          <caret line="115" column="51" lean-forward="true" selection-start-line="115" selection-start-column="51" selection-end-line="115" selection-end-column="51" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>
@@ -497,10 +471,33 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/creativeAppApi/accounts/api/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="72" column="34" lean-forward="true" selection-start-line="72" selection-start-column="34" selection-end-line="72" selection-end-column="34" />
+        <state relative-caret-position="714">
+          <caret line="60" column="37" selection-start-line="60" selection-start-column="37" selection-end-line="60" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="21" column="4" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-255">
           <folding>
-            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="334">
+          <caret line="228" column="56" selection-start-line="228" selection-start-column="56" selection-end-line="228" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#46#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -59,12 +59,13 @@ class ReplyComment(models.Model):
         return self.user.fullname
 
 
-
 # class Collaborators(models.Model):
 #     post = models.ForeignKey(Showcase, on_delete=models.CASCADE)
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, 
+#                             on_delete=models.CASCADE)
 #     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, null=True)
 #     added_on = models.DateTimeField(null=True)
 
 #     def __str__(self):
-#         return self.post.name
+#         return f"{self.user.name} collaborated on {self.post.name}"
 
