@@ -138,7 +138,7 @@ class Profile(models.Model):
         ('Heavyset', 'Heavyset'),
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profiles')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profiles')
     date_of_birth = models.DateField(blank=True, verbose_name="DOB", null=True)
     bio = models.TextField(max_length=500, blank=True, null=True)
     profile_photo = models.CharField(blank=True, max_length=300, null=True)

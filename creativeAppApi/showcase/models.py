@@ -59,13 +59,26 @@ class ReplyComment(models.Model):
         return self.user.fullname
 
 
-# class Collaborators(models.Model):
-#     post = models.ForeignKey(Showcase, on_delete=models.CASCADE)
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, 
-#                             on_delete=models.CASCADE)
-#     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, null=True)
-#     added_on = models.DateTimeField(null=True)
+class Collaborator(models.Model):
+    '''
+    Collaborator model, a showcase owner will be able to add people 
+    that contributed to a project or showcase
+    owner can:
+    -create/users users that collaborate
+    -update/edit an existing user
+    -delete someone as a collaborator
 
-#     def __str__(self):
-#         return f"{self.user.name} collaborated on {self.post.name}"
+    user/collaborator can:
+    -delete himself
+    '''
+    post = models.ForeignKey(Showcase, on_delete=models.CASCADE, related_name="collaborated_showcases")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, 
+                            on_delete=models.CASCADE, related_name="collaborators")
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, null=True, related_name="creative_type")
+    role = models.TextField(null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.fullname} collaborated with {self.post.user.fullname} on '{self.post.title}' as a {self.skill.name}"
 

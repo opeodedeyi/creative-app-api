@@ -23,6 +23,7 @@ from .serializers import (CustomUserDetailsSerializer,
                             ProfileSerializer, 
                             ProfileDetailedSerializer,
                             ProfileSkillEditSerializer,
+                            ProfilePhotoSerializer,
                             SkillSerializer,
                             FollowerSerializer,
                             FollowingSerializer)
@@ -193,6 +194,14 @@ class ProfileSkillRUAPIView(generics.RetrieveUpdateAPIView):
     '''
     queryset = Profile.objects.all()
     serializer_class = ProfileSkillEditSerializer
+    permission_classes = [IsUserOrReadOnly]
+
+class ProfilePhotoRUAPIView(generics.RetrieveUpdateAPIView):
+    '''
+    to edit the photo of the user alone
+    '''
+    queryset = Profile.objects.all()
+    serializer_class = ProfilePhotoSerializer
     permission_classes = [IsUserOrReadOnly]
 
 

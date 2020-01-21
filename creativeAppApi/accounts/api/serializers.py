@@ -96,6 +96,16 @@ class ProfileSkillEditSerializer(serializers.ModelSerializer):
         fields = ('skills',)
 
 
+class ProfilePhotoSerializer(serializers.ModelSerializer):
+    '''
+    For the user to edit his skill
+    '''
+
+    class Meta:
+        model = Profile
+        fields = ('profile_photo',)
+
+
 ###################### user serializer ######################
 class LoginSerializer(LoginSerializer):
     '''
@@ -131,7 +141,7 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
     a custom serializer that overides the default rest-auth, and for
     the user to view his own data
     '''
-    profiles = ProfileSerializer(read_only=True, many=True)
+    profiles = ProfileSerializer(read_only=True)
     showcase = ShowcaseSlugSerializer(read_only=True, many=True)
     followers_count = serializers.SerializerMethodField(read_only=True)
     following_count = serializers.SerializerMethodField(read_only=True)
