@@ -39,7 +39,7 @@ class Comment(models.Model):
     voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="votes")
 
     def __str__(self):
-        return self.user.fullname
+        return self.user.name
 
 
 class ReplyComment(models.Model):
@@ -56,7 +56,7 @@ class ReplyComment(models.Model):
     voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="replyvotes")
 
     def __str__(self):
-        return self.user.fullname
+        return self.user.name
 
 
 class Collaborator(models.Model):
@@ -80,5 +80,5 @@ class Collaborator(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user.fullname} collaborated with {self.post.user.fullname} on '{self.post.title}' as a {self.skill.name}"
+        return f"{self.user.name} collaborated with {self.post.user.name} on '{self.post.title}' as a {self.skill.name}"
 
