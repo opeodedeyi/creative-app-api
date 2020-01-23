@@ -3,6 +3,7 @@ from django.urls import path
 from rest_auth.registration.views import VerifyEmailView
 from rest_auth.views import (PasswordResetView,
                              PasswordResetConfirmView)
+<<<<<<< Updated upstream
 
 from .views import (ConfirmEmailView,
                     FacebookLogin,
@@ -17,6 +18,10 @@ from .views import (ConfirmEmailView,
                     UserFollowerView,
                     UserFollowingView,
                     ListAUsersShowcasesViewSet)
+=======
+from allauth.account.views import ConfirmEmailView
+from . import views as qv
+>>>>>>> Stashed changes
 
 urlpatterns = [
      path('verify-email/', VerifyEmailView.as_view(), name='account_email_verification_sent'),

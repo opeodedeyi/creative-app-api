@@ -17,7 +17,7 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=settings.AUTH_USER_MODEL)
 def add_slug_to_user(sender, instance, *args, **kwargs):
     if instance and not instance.slug:
-        slug = slugify(instance.fullname)
+        slug = slugify(instance.name)
         slug_id = slugify(instance.id)
         random_string = generate_user_string()
         instance.slug = slug + "-" + random_string

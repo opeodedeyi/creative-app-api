@@ -113,7 +113,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     username = None
     email = serializers.EmailField(required=True)
     password1 = serializers.CharField(write_only=True)
-    fullname = serializers.CharField(required=True)
+    name = serializers.CharField(required=True)
     slug = serializers.SlugField(read_only=True)
 
     def get_cleaned_data(self):
@@ -122,7 +122,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         return {
             'password1': self.validated_data.get('password1', ''),
             'email': self.validated_data.get('email', ''),
-            'fullname': self.validated_data.get('fullname', ''),
+            'name': self.validated_data.get('name', ''),
         }
 
 
@@ -131,16 +131,20 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
     a custom serializer that overides the default rest-auth, and for
     the user to view his own data
     '''
+<<<<<<< Updated upstream
     profiles = ProfileSerializer(read_only=True, many=True)
     showcase = ShowcaseSlugSerializer(read_only=True, many=True)
+=======
+    profiles = ProfileSerializer(read_only=True)
+>>>>>>> Stashed changes
     followers_count = serializers.SerializerMethodField(read_only=True)
     following_count = serializers.SerializerMethodField(read_only=True)
     am_i_following = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
-        fields = ('email', 'fullname', 'profiles', 'slug', 'showcase', 'followers_count', 'following_count', 'am_i_following')
-        read_only_fields = ('email', 'fullname', 'profiles', 'slug', 'showcase')
+        fields = ('email', 'name', 'profiles', 'slug', 'followers_count', 'following_count', 'am_i_following')
+        read_only_fields = ('email', 'name', 'profiles', 'slug')
 
     def get_followers_count(self, instance):
         return instance.followers.all().filter(status='following').count()
@@ -183,8 +187,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'fullname', 'slug', 'followers_count', 'following_count', 'am_i_following')
-        read_only_fields = ('email', 'fullname', 'slug', 'followers_count', 'following_count')
+        fields = ('email', 'name', 'slug', 'followers_count', 'following_count', 'am_i_following')
+        read_only_fields = ('email', 'name', 'slug', 'followers_count', 'following_count')
     
     def get_followers_count(self, instance):
         return instance.followers.all().filter(status='following').count()

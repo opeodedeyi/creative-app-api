@@ -21,20 +21,20 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 'classes': ('wide',),
-                'fields': ('email', 'fullname', 'password1', 'password2')
+                'fields': ('email', 'name', 'password1', 'password2')
             }
         ),
     )
 
-    list_display = ('email', 'fullname', 'is_staff', 'last_login')
+    list_display = ('email', 'name', 'is_staff', 'last_login')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
-    search_fields = ('email', 'fullname',)
-    ordering = ('email', 'fullname',)
+    search_fields = ('email', 'name',)
+    ordering = ('email', 'name',)
     filter_horizontal = ('groups', 'user_permissions',)
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    fields = ('user.fullname',)
+    fields = ('user.name',)
 
 
 admin.site.register(User, UserAdmin)

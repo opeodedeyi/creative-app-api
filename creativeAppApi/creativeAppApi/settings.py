@@ -112,6 +112,54 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': 'path.to.callable',
+        'VERIFIED_EMAIL': True,
+        'VERSION': 'v2.12',
+        'APP': {
+            # get the key from "https://developers.facebook.com/apps/615248019004301/settings/basic/"
+            'client_id': '615248019004301',
+            'secret': '6a16042d26c4d2b6a398178f6c865eeb',
+            'key': ''
+        }
+    },
+     'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'offline',
+        },
+        'APP': {
+            # get from "console.developers.google.com/" then apis then credentials then oauthclient
+            # fill in http://127.0.0.1:8000/accounts/google/login/callback/ in the “Authorized redirect URI” field
+            'client_id': '63645136767-t0aqhv7ieuo7raf5lcsos2j5q3rsvr6c.apps.googleusercontent.com',
+            'secret': 'jA5tysVYG6_3Tm5DsvWz8BgL',
+            'key': ''
+        }
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -145,12 +193,13 @@ SITE_ID = 1
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
-
 )
+
+# SOCIALACCOUNT_ADAPTER = "allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
 
 # to use old_password when setting a new password
 OLD_PASSWORD_FIELD_ENABLED = True
-LOGOUT_ON_PASSWORD_CHANGE = False
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
@@ -159,15 +208,18 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USER_EMAIL_FIELD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGOUT_ON_GET = True
-
-# UNSURE
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
 ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 86400 # 1 day in seconds
-ACCOUNT_LOGOUT_REDIRECT_URL ='api/accounts/rest-auth/login/'
-LOGIN_REDIRECT_URL = 'api/accounts/rest-auth/user/'
+ACCOUNT_LOGOUT_REDIRECT_URL ='api/login/'
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+LOGIN_REDIRECT_URL = 'api/user/'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_REQUIRED = ACCOUNT_EMAIL_REQUIRED
+ 
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'

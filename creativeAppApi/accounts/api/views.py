@@ -49,40 +49,6 @@ class CustomRegisterView(RegisterView):
     permission_classes = [AllowAny]
     queryset = User.objects.all()
 
-
-class ConfirmEmailView(APIView):
-    '''
-    a custom view that verifies the user email as the rest-auth default 
-    solution doesnt work effectively
-    From: https://gist.github.com/iMerica/a6a7efd80d49d6de82c7928140676957
-    '''
-    permission_classes = [AllowAny]
-
-    def get(self, *args, **kwargs):
-        self.object = confirmation = self.get_object()
-        confirmation.confirm(self.request)
-        # A React/Vue Router Route will handle the failure scenario
-        return HttpResponseRedirect('/api/accounts/login/')
-
-    def get_object(self, queryset=None):
-        key = self.kwargs['key']
-        email_confirmation = EmailConfirmationHMAC.from_key(key)
-        if not email_confirmation:
-            if queryset is None:
-                queryset = self.get_queryset()
-            try:
-                email_confirmation = queryset.get(key=key.lower())
-            except EmailConfirmation.DoesNotExist:
-                # A React/Vue Router Route will handle the failure scenario
-                return HttpResponseRedirect('/login/failure/')
-        return email_confirmation
-
-    def get_queryset(self):
-        qs = EmailConfirmation.objects.all_valid()
-        qs = qs.select_related("email_address__user")
-        return qs
-
-
 ############################### Listing users in the database ###############################
 class ListUsersView(APIView):
     '''
