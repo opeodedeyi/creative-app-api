@@ -10,15 +10,15 @@ class UserManager(BaseUserManager):
     """
     The User Manager
     """
-    def _create_user(self, email, fullname, password, is_staff, is_superuser, **extra_fields):
+    def _create_user(self, email, name, password, is_staff, is_superuser, **extra_fields):
         if not email:
             raise ValueError('Users must have an email address')
         now = timezone.now()
         email = self.normalize_email(email)
-        fullname = fullname
+        name = name
         user = self.model(
             email=email,
-            fullname=fullname,
+            name=name,
             is_staff=is_staff,
             is_active=True,
             is_superuser=is_superuser,
@@ -30,11 +30,11 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_user(self, email, fullname, password, **extra_fields):
-        return self._create_user(email, fullname, password, False, False, **extra_fields)
+    def create_user(self, email, name, password, **extra_fields):
+        return self._create_user(email, name, password, False, False, **extra_fields)
 
-    def create_superuser(self, email, fullname, password, **extra_fields):
-        user = self._create_user(email, fullname, password, True, True, **extra_fields)
+    def create_superuser(self, email, name, password, **extra_fields):
+        user = self._create_user(email, name, password, True, True, **extra_fields)
         user.save(using=self._db)
         return user
 
@@ -42,7 +42,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     username = None
     email = models.EmailField(max_length=254, unique=True)
-    fullname = models.CharField(max_length=250)
+    name = models.CharField(max_length=250)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -51,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     slug = models.SlugField(max_length=255, unique=True, blank=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['fullname']
+    REQUIRED_FIELDS = ['name']
 
     objects = UserManager()
 
@@ -151,7 +151,7 @@ class Profile(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.fullname
+        return self.user.name
 
 
 class FollowStatus(enum.Enum):

@@ -3,12 +3,13 @@ from django.urls import path
 from rest_auth.registration.views import VerifyEmailView
 from rest_auth.views import (PasswordResetView,
                              PasswordResetConfirmView)
-
+from allauth.account.views import ConfirmEmailView
 from . import views as qv
+
 
 urlpatterns = [
      path('verify-email/', VerifyEmailView.as_view(), name='account_email_verification_sent'),
-     path('signup/account-confirm-email/<key>/', qv.ConfirmEmailView.as_view(), name='account_confirm_email'),
+     path('signup/account-confirm-email/<key>/', ConfirmEmailView.as_view(), name='account_confirm_email'),
      path('', include('rest_auth.urls')),
      path('signup/', include('rest_auth.registration.urls')),
      path('facebook/', qv.FacebookLogin.as_view(), name='fb_login'),
