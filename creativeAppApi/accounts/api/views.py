@@ -13,8 +13,8 @@ from rest_framework.permissions import (AllowAny,
 
 from .permissions import IsUserOrReadOnly, IsAdminUserOrReadOnly
 from allauth.account.models import EmailConfirmation, EmailConfirmationHMAC
-from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from rest_auth.registration.views import SocialLoginView
 from django.http import HttpResponseRedirect
 from django.db.models import Q
@@ -35,8 +35,10 @@ from accounts.models import Profile, Skill, FollowLog
 ############################### user authentication section ###############################
 User = get_user_model()
 
-class FacebookLogin(SocialLoginView):
-    adapter_class = FacebookOAuth2Adapter
+# class GoogleLogin(SocialLoginView):
+#     adapter_class = GoogleOAuth2Adapter
+#     client_class = OAuth2Client
+#     callback_url = 'http://localhost:8000/accounts/google/login/callback/'
 
 
 class GoogleLogin(SocialLoginView):

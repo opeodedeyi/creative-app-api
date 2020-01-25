@@ -113,39 +113,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 SOCIALACCOUNT_PROVIDERS = {
-    'facebook': {
-        'METHOD': 'oauth2',
-        'SCOPE': ['email', 'public_profile', 'user_friends'],
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-        'INIT_PARAMS': {'cookie': True},
-        'FIELDS': [
-            'id',
-            'email',
-            'name',
-            'first_name',
-            'last_name',
-            'verified',
-            'locale',
-            'timezone',
-            'link',
-            'gender',
-            'updated_time',
-        ],
-        'EXCHANGE_TOKEN': True,
-        'LOCALE_FUNC': 'path.to.callable',
-        'VERIFIED_EMAIL': True,
-        'VERSION': 'v2.12',
-        'APP': {
-            # get the key from "https://developers.facebook.com/apps/615248019004301/settings/basic/"
-            'client_id': '615248019004301',
-            'secret': '6a16042d26c4d2b6a398178f6c865eeb',
-            'key': ''
-        }
-    },
-     'google': {
+    'google': {
         'SCOPE': [
-            'profile',
             'email',
+            'profile',
+            'name',
         ],
         'AUTH_PARAMS': {
             'access_type': 'offline',
@@ -195,7 +167,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-# SOCIALACCOUNT_ADAPTER = "allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
 
 # to use old_password when setting a new password
 OLD_PASSWORD_FIELD_ENABLED = True
@@ -210,6 +182,7 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
@@ -217,7 +190,7 @@ ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 86400 # 1 day in seconds
 ACCOUNT_LOGOUT_REDIRECT_URL ='api/login/'
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 LOGIN_REDIRECT_URL = 'api/user/'
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 SOCIALACCOUNT_EMAIL_REQUIRED = ACCOUNT_EMAIL_REQUIRED
  
 
@@ -229,7 +202,7 @@ EMAIL_HOST_PASSWORD = '9ja4lifE'
 DEFAULT_FROM_EMAIL = 'opedoetester@gmail.com'
 DEFAULT_TO_EMAIL = EMAIL_HOST_USER
 
-EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
+# EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
 
 REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "accounts.api.serializers.CustomUserDetailsSerializer",
