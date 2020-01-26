@@ -5,6 +5,8 @@ from django.utils.text import slugify
 
 from core.utils import generate_user_string
 from .models import Profile
+from allauth.account.signals import user_signed_up
+from allauth.socialaccount.signals import pre_social_login
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -22,3 +24,11 @@ def add_slug_to_user(sender, instance, *args, **kwargs):
         random_string = generate_user_string()
         instance.slug = slug + "-" + random_string
         print(instance)
+
+
+# this signal below helps google pass the name as an extra parameter
+@receiver(pre_social_login)
+def populate_user(request, sociallogin, **kwargs):
+    if sociallogin.account.provider == "google":
+        extra_data = sociallogin.account.extra_data
+        sociallogin.user.name = extra_data['name']

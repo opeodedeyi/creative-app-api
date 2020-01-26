@@ -35,12 +35,6 @@ from accounts.models import Profile, Skill, FollowLog
 ############################### user authentication section ###############################
 User = get_user_model()
 
-# class GoogleLogin(SocialLoginView):
-#     adapter_class = GoogleOAuth2Adapter
-#     client_class = OAuth2Client
-#     callback_url = 'http://localhost:8000/accounts/google/login/callback/'
-
-
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
 

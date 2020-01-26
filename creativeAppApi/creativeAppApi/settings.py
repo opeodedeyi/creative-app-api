@@ -117,7 +117,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': [
             'email',
             'profile',
-            'name',
+            'name'
         ],
         'AUTH_PARAMS': {
             'access_type': 'offline',
@@ -167,7 +167,6 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-SOCIALACCOUNT_ADAPTER = "allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
 
 # to use old_password when setting a new password
 OLD_PASSWORD_FIELD_ENABLED = True
