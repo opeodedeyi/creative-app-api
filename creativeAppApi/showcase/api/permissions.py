@@ -15,3 +15,11 @@ class IsUser(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return False
         return obj.user == request.user
+
+
+class ShowcaseOwner(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return False
+        return obj.creator == request.user

@@ -1,7 +1,17 @@
 from rest_framework import serializers
-from ..models import Showcase, Comment, ReplyComment
+from ..models import Showcase, Comment, ReplyComment, Collaborator
 from django.utils import timezone
 import math
+
+
+class CollaboratorSerializer(serializers.ModelSerializer):
+    creator = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    user = serializers.SlugRelatedField(slug_field='slug')
+    post = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+
+    class Meta:
+        model = Collaborator
+        exclude = ['created_on', 'updated_on']
 
 
 class ReplySerializer(serializers.ModelSerializer):

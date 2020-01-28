@@ -16,7 +16,16 @@ import datetime
 
 User = get_user_model()
 # SHOWCASE APIView
-class showcaseListCreateViewSet(generics.ListCreateAPIView):
+class showcaseListViewSet(generics.ListAPIView):
+    '''
+    Create list and showcases view. user must be logged in to do this
+    '''
+    queryset = Showcase.objects.all()
+    serializer_class = ShowcaseSerializer
+    permission_classes = [AllowAny]
+
+
+class showcaseCreateViewSet(generics.CreateAPIView):
     '''
     Create list and showcases view. user must be logged in to do this
     '''
@@ -268,7 +277,7 @@ class MostLikedYearShowcasesView(generics.ListAPIView):
         return Showcase.objects.filter(created_on__range=[last_365_days,datetime.datetime.today()]).annotate(like_count=Count('voters')).order_by('-like_count')
 
 
-class FollowerShowcasesView(generics.ListAPIView):
+class FollowingShowcasesView(generics.ListAPIView):
     '''
     Showcases of people i follow
     '''
@@ -279,3 +288,12 @@ class FollowerShowcasesView(generics.ListAPIView):
         current_user = self.request.user
         followed_people = FollowLog.objects.filter(followed_by=current_user).filter(status='following').values('user')
         return Showcase.objects.filter(user__in=followed_people).order_by('-created_on')
+
+
+# Add collaborators to showcase
+class collaboratorCreateView():
+    '''
+    add collaborator to a showcase
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [IsAuthenticated]

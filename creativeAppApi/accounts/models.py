@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
+from datetime import timedelta
 from datetime import date
 from django.conf import settings
 import enum

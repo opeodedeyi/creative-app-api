@@ -2,10 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f441b7b-8010-408d-8eb8-5e0ea08af3a3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/adapters.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/adapters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/api/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creativeAppApi/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/accounts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creativeAppApi/creativeAppApi/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/creativeAppApi/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/creativeAppApi/showcase/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/showcase/api/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/creativeAppApi/showcase/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/showcase/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/creativeAppApi/showcase/migrations/0003_remove_collaborator_owner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/creativeAppApi/showcase/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/creativeAppApi/showcase/models.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,13 +45,6 @@
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="main: schema" type="981a47c2:SqliteImplModel$Schema" />
       </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="db" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="main: schema" type="981a47c2:SqliteImplModel$Schema" />
-        <item name="accounts_followlog: table" type="3d80ac25:SqliteImplModel$Table" />
-      </path>
     </expand>
     <select />
   </component>
@@ -54,26 +52,102 @@
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/serializers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-255">
-              <folding>
-                <element signature="e#0#38#0" expanded="true" />
-              </folding>
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/account_emailconfirmation">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/account_emailaddress">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_comment">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_comment_voters">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_replycomment">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_replycomment_voters">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_showcase">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_showcase_voters">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/views.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="228" column="56" selection-start-line="228" selection-start-column="56" selection-end-line="228" selection-end-column="56" />
-              <folding>
-                <element signature="e#0#46#0" expanded="true" />
-              </folding>
+        <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/socialaccount_socialaccount">
+          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+            <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+              <filtering>
+                <filter text="" />
+              </filtering>
             </state>
           </provider>
         </entry>
@@ -121,6 +195,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -175,7 +250,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -265,11 +339,12 @@
       <workItem from="1579396904279" duration="844000" />
       <workItem from="1579487928996" duration="741000" />
       <workItem from="1579524027481" duration="153000" />
+      <workItem from="1580161468162" duration="608000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21337000" />
+    <option name="totallyTimeSpent" value="21945000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -284,7 +359,7 @@
     <frame x="-7" y="-7" width="1550" height="878" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18364611" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18632708" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -307,7 +382,7 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" />
-      <window_info anchor="right" id="Database" order="4" weight="0.3297587" />
+      <window_info active="true" anchor="right" id="Database" order="4" visible="true" weight="0.3297587" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -318,7 +393,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/creativeAppApi/accounts/api/views.py</url>
-          <line>94</line>
+          <line>57</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
@@ -483,22 +558,100 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="217" column="77" lean-forward="true" selection-start-line="217" selection-start-column="77" selection-end-line="217" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/serializers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-255">
+        <state>
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/creativeAppApi/showcase/api/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="228" column="56" selection-start-line="228" selection-start-column="56" selection-end-line="228" selection-end-column="56" />
-          <folding>
-            <element signature="e#0#46#0" expanded="true" />
-          </folding>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/account_emailconfirmation">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/account_emailaddress">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_comment">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_comment_voters">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_replycomment">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_replycomment_voters">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_showcase">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/showcase_showcase_voters">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://d6b84151-23d6-4cbb-8b7e-7f22ec22ad86/schema/main/table/socialaccount_socialaccount">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state projectRestartId="e071a395-760a-4afd-b793-6f2ddb7da0d7">
+          <filtering>
+            <filter text="" />
+          </filtering>
         </state>
       </provider>
     </entry>

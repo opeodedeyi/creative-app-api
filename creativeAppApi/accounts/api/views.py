@@ -171,13 +171,31 @@ class ProfilePhotoRUAPIView(generics.RetrieveUpdateAPIView):
 # Note: to be able to add a skill by the superuser/AdminUser
 # to also be able to get all skills in the data base
 
-class SkillListAPIView(generics.ListCreateAPIView):
+class SkillListAPIView(generics.ListAPIView):
     '''
     gets all skills in the database
     '''
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [AllowAny]
+
+
+class SkillCreateAPIView(generics.CreateAPIView):
+    '''
+    create a new skill in the database
+    '''
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = [IsAdminUser]
+    
+
+class SkillUpdateAPIView(generics.RetrieveUpdateDestroyAPIView):
+    '''
+    update and delete a particular skill in the database
+    '''
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = [IsAdminUser]
 
 
 ############################### get a users showcases ###############################

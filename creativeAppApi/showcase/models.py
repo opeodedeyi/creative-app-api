@@ -71,6 +71,8 @@ class Collaborator(models.Model):
     user/collaborator can:
     -delete himself
     '''
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, 
+                            on_delete=models.CASCADE, related_name="showcase_creator")
     post = models.ForeignKey(Showcase, on_delete=models.CASCADE, related_name="collaborated_showcases")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, 
                             on_delete=models.CASCADE, related_name="collaborators")

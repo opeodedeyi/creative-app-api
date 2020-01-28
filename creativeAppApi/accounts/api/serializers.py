@@ -17,7 +17,8 @@ class SkillSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
-        fields = ('name',)
+        fields = ('pk', 'name')
+        read_only_fields = ('pk',)
 
 
 #################### FollowLog serializers ####################
@@ -90,6 +91,18 @@ class ProfileSkillEditSerializer(serializers.ModelSerializer):
     '''
     For the user to edit his skill
     '''
+    skills = serializers.PrimaryKeyRelatedField(many=True, queryset=Skill.objects.all())
+
+    class Meta:
+        model = Profile
+        fields = ('skills',)
+
+
+class ProfileSkillEditSerializer(serializers.ModelSerializer):
+    '''
+    For the user to edit his skill
+    '''
+    skills = serializers.PrimaryKeyRelatedField(many=True, queryset=Skill.objects.all())
 
     class Meta:
         model = Profile

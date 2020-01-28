@@ -28,6 +28,8 @@ urlpatterns = [
      path("profile/<int:pk>/skills/", qv.ProfileSkillRUAPIView.as_view(), name="profile-skill-edit"),
      path("profile/<int:pk>/photo/", qv.ProfilePhotoRUAPIView.as_view(), name="profile-photo-edit"),
      path("skills/", qv.SkillListAPIView.as_view(), name="skills"),
+     path("skillscreate/", qv.SkillCreateAPIView.as_view(), name="skills-create"),
+     path("skills/<int:pk>/", qv.SkillUpdateAPIView.as_view(), name="skills-update-destroy"),
 
      # Querysets for users
      path("users/<slug:slug>/showcases/", qv.ListAUsersShowcasesViewSet.as_view(), name="a-users-showcase-list"),
