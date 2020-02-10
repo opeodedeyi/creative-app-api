@@ -122,10 +122,8 @@ class Profile(models.Model):
     profile photo is expecting photos link gotten from cloudnairy from the frontend
     - The height is calculated in feets and inches
     - Need to sort out location (lives in)
-    - Need to add an age function
-    - Need to add achievemnet as a foreign field 
+    - Need to add achievement as a foreign field 
     - Need to add education also as a foreign field
-    - Add follow functionality
     '''
 
     SEX = (

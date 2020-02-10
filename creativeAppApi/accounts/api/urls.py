@@ -15,6 +15,7 @@ urlpatterns = [
      path('google/', qv.GoogleLogin.as_view(), name='google_login'),
      path('password/reset/', PasswordResetView.as_view(), name='password_reset'),
      path('password/reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+     # path('resend_confirmation_email/', qv.EmailConfirmation.as_view(), name='resend-email-confirmation'),
 
      # To get the authenticated user's own object, its provided by djago-rest-auth using this route: 'user/'
      path('users/', qv.ListUsersView.as_view(), name='list-users'),

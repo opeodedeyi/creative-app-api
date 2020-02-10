@@ -20,6 +20,7 @@ class Showcase(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
     voters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="upvotes")
     slug = models.SlugField(max_length=255, unique=True)
+    administrator = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="administrators", blank=True)
 
     def __str__(self):
         return self.title
@@ -71,8 +72,6 @@ class Collaborator(models.Model):
     user/collaborator can:
     -delete himself
     '''
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, 
-                            on_delete=models.CASCADE, related_name="showcase_creator")
     post = models.ForeignKey(Showcase, on_delete=models.CASCADE, related_name="collaborated_showcases")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, 
                             on_delete=models.CASCADE, related_name="collaborators")

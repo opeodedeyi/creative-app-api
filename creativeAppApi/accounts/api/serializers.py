@@ -3,8 +3,11 @@ from rest_auth.registration.serializers import RegisterSerializer
 from rest_auth.serializers import LoginSerializer
 from django.contrib.auth import get_user_model
 from accounts.models import Profile, Skill, FollowLog
-from showcase.api.serializers import ShowcaseSlugSerializer
 from datetime import date
+from django.contrib.auth.forms import PasswordResetForm
+from rest_auth.serializers import PasswordResetSerializer
+from django.conf import settings
+from django.utils.translation import gettext as _
 
 
 User = get_user_model()
@@ -236,3 +239,18 @@ class UserSerializer(serializers.ModelSerializer):
                     return "No"
         except Exception as e:
             return "No"
+
+
+class PasswordResetSerializer(PasswordResetSerializer):
+    '''
+    overides the default PasswordResetSerializer so a styled email can be sent to the user
+    '''
+    def get_email_options(self):
+        request = self.context.get('request')
+        domain = request.get_host()
+        return {
+            'subject_template_name': 'account/email/password_reset_key_subject.txt',
+            # 'email_template_name': 'account/email/password_reset_key.txt',
+            'extra_email_context': {'parsed_domain': domain},
+            'html_email_template_name': 'account/password_reset_key.html',
+        }

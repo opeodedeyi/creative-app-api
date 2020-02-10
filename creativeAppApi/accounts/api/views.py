@@ -15,6 +15,7 @@ from .permissions import IsUserOrReadOnly, IsAdminUserOrReadOnly
 from allauth.account.models import EmailConfirmation, EmailConfirmationHMAC
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from allauth.account.utils import send_email_confirmation
 from rest_auth.registration.views import SocialLoginView
 from django.http import HttpResponseRedirect
 from django.db.models import Q
@@ -46,7 +47,22 @@ class CustomRegisterView(RegisterView):
     permission_classes = [AllowAny]
     queryset = User.objects.all()
 
-############################### Listing users in the database ###############################
+
+############################# request new confirmation email #############################
+# class EmailConfirmation(APIView):
+#     permission_classes = [AllowAny] 
+
+#     def post(self, request):
+#         user = User.objects.get(email=request.data['email'] # the email sent from the client
+        
+#         # check if user exists or not, if user doesn't exist, send the response back to the user to let them know that no account with this email exists
+#         # if user exists, resend the email using this
+
+#         send_email_confirmation(request, request.user)
+#         return Response({'message': 'Email confirmation sent'}, status=status.HTTP_201_CREATED)
+
+
+############################## Listing users in the database ##############################
 class ListUsersView(APIView):
     '''
     Gets all the users in the database

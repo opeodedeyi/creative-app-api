@@ -6,7 +6,6 @@ import math
 
 class CollaboratorSerializer(serializers.ModelSerializer):
     creator = serializers.SlugRelatedField(read_only=True, slug_field='slug')
-    user = serializers.SlugRelatedField(slug_field='slug')
     post = serializers.SlugRelatedField(read_only=True, slug_field='slug')
 
     class Meta:
@@ -152,7 +151,7 @@ class ShowcaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Showcase
-        exclude = ['voters', 'updated_on', 'id']
+        exclude = ['voters', 'updated_on', 'id', 'administrator']
 
     def get_likes_count(self, instance):
         return instance.voters.count()
@@ -220,7 +219,7 @@ class ShowcaseDetaiedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Showcase
-        exclude = ['updated_on', 'id']
+        exclude = ['updated_on', 'id', 'administrator']
 
     def get_created_on(self, instance):
         return instance.created_on.strftime("%d %B %Y ; %H:%M:%S %Z")
@@ -278,9 +277,9 @@ class ShowcaseDetaiedSerializer(serializers.ModelSerializer):
             return str(years) + " years ago"
 
 
-class ShowcaseSlugSerializer(serializers.ModelSerializer):
-    slug = serializers.SlugField(read_only=True)
+class ShowcaseAdminSerializer(serializers.ModelSerializer):
+    # administrator = serializers.SlugRelatedField(read_only=True, slug_field='slug')
 
     class Meta:
         model = Showcase
-        fields = ['slug',]
+        fields = ['administrator',]
