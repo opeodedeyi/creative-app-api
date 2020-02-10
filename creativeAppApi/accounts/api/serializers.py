@@ -4,7 +4,6 @@ from rest_auth.serializers import LoginSerializer
 from django.contrib.auth import get_user_model
 from accounts.models import Profile, Skill, FollowLog
 from datetime import date
-from django.contrib.auth.forms import PasswordResetForm
 from rest_auth.serializers import PasswordResetSerializer
 from django.conf import settings
 from django.utils.translation import gettext as _
@@ -20,7 +19,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
-        fields = ('pk', 'name')
+        fields = ('pk', 'name', 'subcategory')
         read_only_fields = ('pk',)
 
 

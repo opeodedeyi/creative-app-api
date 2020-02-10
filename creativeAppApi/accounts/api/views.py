@@ -191,9 +191,11 @@ class SkillListAPIView(generics.ListAPIView):
     '''
     gets all skills in the database
     '''
-    queryset = Skill.objects.all()
     serializer_class = SkillSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Skill.objects.all().order_by("subcategory")
 
 
 class SkillCreateAPIView(generics.CreateAPIView):
