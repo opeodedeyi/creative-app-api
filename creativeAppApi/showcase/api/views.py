@@ -4,6 +4,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import APIException
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 
 from .permissions import IsUserOrReadOnly, IsAdmin
@@ -49,23 +50,33 @@ class showcaseCreateViewSet(generics.CreateAPIView):
 
 class showcaseAddAdminAPIView(APIView):
     '''
-    Add a user as an admin to a showcase
+    Add a user as an administrator to a showcase
     '''
     serializer_class = ShowcaseAdminSerializer
     permission_classes = [IsAdmin]
 
-    def post(self, request, slug):
+    def put(self, request, slug):  # PUT is more suited for updating instance
         showcase = get_object_or_404(Showcase, slug=slug)
-        # user = self.request.user
+        try:
+            self.check_object_permissions(request, showcase)
+            serializer = self.serializer_class(showcase, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except APIException:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if request.user in showcase.administrator.all():
-            showcase.administrator.add(user.slug)
-            showcase.save()
 
-            serializer = self.serializer_class(showcase)
-
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class showcaseListAdminAPIView(generics.RetrieveAPIView):
+    '''
+    List all the administrators to a showcase
+    '''
+    queryset = Showcase.objects.all()
+    lookup_field = "slug"
+    serializer_class = ShowcaseAdminSerializer
+    permission_classes = [AllowAny]
 
 
 class showcaseRUDViewSet(generics.RetrieveUpdateDestroyAPIView):
@@ -321,26 +332,31 @@ class FollowingShowcasesView(generics.ListAPIView):
         return Showcase.objects.filter(user__in=followed_people).order_by('-created_on')
 
 
-# Add collaborators to showcase
 class collaboratorCreateView(APIView):
     '''
-    add collaborator to a showcase
+    Add collaborator to a showcase
     '''
     serializer_class = CollaboratorSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdmin]
 
     def post(self, request, slug):
         showcase = get_object_or_404(Showcase, slug=slug)
-        showcase_creator = showcase.user
-        if showcase.user.slug == request.user.slug:
-            collaborate = Collaborator.objects.create(
-                creator = showcase_creator,
-                post = showcase
-            )
-            print(request.user.slug)
-            print(showcase.user.slug)
-            collaborate.save()
-            serializer = self.serializer_class(collaborate)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            self.check_object_permissions(request, showcase)
+            serializer = self.serializer_class(data=request.data, context={'post':showcase})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except APIException:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+class collaboratorListView(APIView):
+    '''
+    List collaborators to a showcase
+    '''
+    serializer_class = CollaboratorSerializer
+    permission_classes = [AllowAny]

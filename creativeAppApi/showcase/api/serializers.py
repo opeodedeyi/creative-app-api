@@ -1,16 +1,28 @@
 from rest_framework import serializers
 from ..models import Showcase, Comment, ReplyComment, Collaborator
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 import math
 
 
+User = get_user_model()
+
 class CollaboratorSerializer(serializers.ModelSerializer):
-    creator = serializers.SlugRelatedField(read_only=True, slug_field='slug')
     post = serializers.SlugRelatedField(read_only=True, slug_field='slug')
 
     class Meta:
         model = Collaborator
         exclude = ['created_on', 'updated_on']
+
+    def validate_user(self, value):
+        showcase = self.context.get('post')
+        if showcase.collaborated_showcases.filter(user=value).exists():
+            raise serializers.ValidationError("Can't add an existing collaborator to a showcase")
+        return value
+
+    def create(self, validated_data):
+        validated_data['post'] = self.context['post']
+        return super(CollaboratorSerializer, self).create(validated_data)
 
 
 class ReplySerializer(serializers.ModelSerializer):
@@ -278,8 +290,14 @@ class ShowcaseDetaiedSerializer(serializers.ModelSerializer):
 
 
 class ShowcaseAdminSerializer(serializers.ModelSerializer):
-    # administrator = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    administrator = serializers.SlugRelatedField(slug_field='slug', many=True, queryset=User.objects.all())
 
     class Meta:
         model = Showcase
         fields = ['administrator',]
+
+    def update(self, instance, validated_data):
+        users = validated_data.get('administrator')
+        for user in users:
+            instance.administrator.add(user)
+        return instance

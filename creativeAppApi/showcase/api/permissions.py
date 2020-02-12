@@ -22,4 +22,4 @@ class IsAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return False
-        return obj.administrator == request.user
+        return request.user.administrators.filter(pk=obj.pk).exists()
