@@ -20,16 +20,16 @@ from rest_auth.registration.views import SocialLoginView
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 from .serializers import (CustomUserDetailsSerializer,
-                            UserSerializer,
-                            ProfileSerializer, 
-                            ProfileDetailedSerializer,
-                            ProfileSkillEditSerializer,
-                            ProfilePhotoSerializer,
-                            SkillSerializer,
-                            FollowerSerializer,
-                            FollowingSerializer)
+                          UserSerializer,
+                          ProfileSerializer,
+                          ProfileDetailedSerializer,
+                          ProfileSkillEditSerializer,
+                          ProfilePhotoSerializer,
+                          SkillSerializer,
+                          FollowerSerializer,
+                          FollowingSerializer)
 from showcase.api.serializers import ShowcaseSerializer
-from showcase.models import Showcase
+from showcase.models import Showcase, Collaborator
 from accounts.models import Profile, Skill, FollowLog
 
 
@@ -227,4 +227,19 @@ class ListAUsersShowcasesViewSet(generics.ListAPIView):
     def get_queryset(self):
         kwarg_slug = self.kwargs.get("slug")
         user = get_object_or_404(User, slug=kwarg_slug)
+        return Showcase.objects.filter(user=user)
+
+
+class ListAUsersCollaboratedShowcasesViewSet(generics.ListAPIView):
+    '''
+    List all the showcases of a user
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        kwarg_slug = self.kwargs.get("slug")
+        user = get_object_or_404(User, slug=kwarg_slug)
+
+        collaborator = Collaborator.objects.filter(user=user)
         return Showcase.objects.filter(user=user)

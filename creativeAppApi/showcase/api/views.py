@@ -5,11 +5,24 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-
-from .permissions import IsUserOrReadOnly, IsAdmin
-from .serializers import ShowcaseSerializer, CommentSerializer, ShowcaseDetaiedSerializer, ShowcaseAdminSerializer, ReplySerializer, CollaboratorSerializer
-from ..models import Showcase, Comment, ReplyComment, Collaborator
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly,
+                                        AllowAny)
+from .permissions import (IsUserOrReadOnly, 
+                          IsAdmin, 
+                          IsUser, 
+                          IsAdminOrOwner)
+from .serializers import (ShowcaseSerializer,
+                          CommentSerializer,
+                          ShowcaseDetaiedSerializer,
+                          ShowcaseAdminSerializer,
+                          ReplySerializer,
+                          CollaboratorSerializer,
+                          CollaboratorUpdateSerializer)
+from ..models import (Showcase,
+                      Comment,
+                      ReplyComment,
+                      Collaborator)
 from accounts.models import FollowLog
 from django.db.models import Count
 import datetime
@@ -332,9 +345,10 @@ class FollowingShowcasesView(generics.ListAPIView):
         return Showcase.objects.filter(user__in=followed_people).order_by('-created_on')
 
 
-class collaboratorCreateView(APIView):
+# Collaborator functionality
+class CollaboratorCreateView(APIView):
     '''
-    Add collaborator to a showcase
+    Allow Aministrator only to add a collaborator to a showcase
     '''
     serializer_class = CollaboratorSerializer
     permission_classes = [IsAdmin]
@@ -354,9 +368,73 @@ class collaboratorCreateView(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-class collaboratorListView(APIView):
+class CollaboratorDeleteView(APIView):
     '''
-    List collaborators to a showcase
+    Allow Aministrator only to delete a collaborator to a showcase
+    '''
+    permission_classes = [IsAdminOrOwner]
+
+    def delete(self, request, pk):
+        collaborator = get_object_or_404(Collaborator, pk=pk)
+
+        try:
+            self.check_object_permissions(request, collaborator)
+            collaborator.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except APIException:
+            return Response(status=status.HTTP_403_FORBIDDEN) 
+
+
+class CollaboratorListView(APIView):
+    '''
+    List all the collaborators to a showcase
     '''
     serializer_class = CollaboratorSerializer
     permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        showcase = get_object_or_404(Showcase, slug=slug)
+        collaborators = Collaborator.objects.filter(post=showcase)
+        serializer = self.serializer_class(collaborators, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CollaboratorRetrieveView(generics.RetrieveAPIView):
+    '''
+    get deatails about a collaboration
+    '''
+    queryset = Collaborator.objects.all()
+    serializer_class = CollaboratorUpdateSerializer
+    permission_classes = [AllowAny]
+
+
+class CollaboratorUpdateView(APIView):
+    '''
+    Gives a collaborator or admin the ability to edit their own collaboration detail
+    They can edit their:
+        -Role
+        -Skill
+    '''
+    permission_classes = [IsAdminOrOwner]
+    serializer_class = CollaboratorUpdateSerializer
+
+    def get(self, request, pk):
+        collaborator = get_object_or_404(Collaborator, pk=pk)
+        serializer = self.serializer_class(collaborator)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def put(self, request, pk):
+        collaborator = get_object_or_404(Collaborator, pk=pk)
+
+        try:
+            self.check_object_permissions(request, collaborator)
+            serializer = self.serializer_class(collaborator, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except APIException:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+    

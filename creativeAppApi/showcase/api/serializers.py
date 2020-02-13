@@ -9,6 +9,7 @@ User = get_user_model()
 
 class CollaboratorSerializer(serializers.ModelSerializer):
     post = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    user = serializers.SlugRelatedField(slug_field='slug', queryset=User.objects.all())
 
     class Meta:
         model = Collaborator
@@ -23,6 +24,17 @@ class CollaboratorSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['post'] = self.context['post']
         return super(CollaboratorSerializer, self).create(validated_data)
+
+
+class CollaboratorUpdateSerializer(serializers.ModelSerializer):
+    post = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    user = serializers.SlugRelatedField(slug_field='slug', read_only=True)
+
+    class Meta:
+        model = Collaborator
+        exclude = ['created_on', 'updated_on']
+        read_only_fields = ('pk',)
+
 
 
 class ReplySerializer(serializers.ModelSerializer):
