@@ -34,5 +34,6 @@ urlpatterns = [
 
      # Querysets for users
      path("users/<slug:slug>/showcases/", qv.ListAUsersShowcasesViewSet.as_view(), name="a-users-showcase-list"),
-     path("users/<slug:slug>/collaborated/", qv.ListAUsersCollaboratedShowcasesViewSet.as_view(), name="users-collaborated-showcase-list"),
+     path("users/<slug:slug>/collaboration/", qv.ListCollaborationShowcasesViewSet.as_view(), name="users-collaborated-showcase-list"),
+     path("users/<slug:slug>/administrator/", qv.AdminShowcasesViewSet.as_view(), name="users-admin-showcase-list"),
 ]

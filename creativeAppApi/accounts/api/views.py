@@ -28,7 +28,7 @@ from .serializers import (CustomUserDetailsSerializer,
                           SkillSerializer,
                           FollowerSerializer,
                           FollowingSerializer)
-from showcase.api.serializers import ShowcaseSerializer
+from showcase.api.serializers import ShowcaseSerializer, CollaboratorSerializer
 from showcase.models import Showcase, Collaborator
 from accounts.models import Profile, Skill, FollowLog
 
@@ -75,7 +75,7 @@ class ListUsersView(APIView):
 
         serializer_context = {"request": request}
         serializer = self.serializer_class(user, context=serializer_context, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserRetriveAPIView(APIView):
@@ -106,7 +106,7 @@ class FollowAUserView(APIView):
             'detail':None
         }
         response['status'],response['detail'] = request.user.follow_a_user(slug)
-        return Response(response)
+        return Response(response, status=status.HTTP_201_CREATED)
 
 
 class UnFollowAUserView(APIView):
@@ -121,7 +121,7 @@ class UnFollowAUserView(APIView):
             'detail':None
         }
         response['status'],response['detail'] = request.user.unfollow_a_user(slug)
-        return Response(response)
+        return Response(response, status=status.HTTP_202_ACCEPTED)
 
 
 ############################### Get followers and following ###############################
@@ -135,7 +135,7 @@ class UserFollowerView(APIView):
         user = User.objects.get(slug=slug)
         followers = user.followers.all().filter(status='following').order_by("-followed_on")
         serializer = FollowerSerializer(followers, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserFollowingView(APIView):
@@ -148,7 +148,7 @@ class UserFollowingView(APIView):
         user = User.objects.get(slug=slug)
         following = user.following.all().filter(status='following').order_by("-followed_on")
         serializer = FollowingSerializer(following, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 ############################### profile section ###############################
@@ -230,9 +230,23 @@ class ListAUsersShowcasesViewSet(generics.ListAPIView):
         return Showcase.objects.filter(user=user)
 
 
-class ListAUsersCollaboratedShowcasesViewSet(generics.ListAPIView):
+class ListCollaborationShowcasesViewSet(generics.ListAPIView):
     '''
-    List all the showcases of a user
+    List all the collabrations of a user
+    '''
+    serializer_class = CollaboratorSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        kwarg_slug = self.kwargs.get("slug")
+        user = get_object_or_404(User, slug=kwarg_slug)
+
+        return Collaborator.objects.filter(user=user)
+
+
+class AdminShowcasesViewSet(generics.ListAPIView):
+    '''
+    List all the showcases that a user is an administrator of
     '''
     serializer_class = ShowcaseSerializer
     permission_classes = [AllowAny]
@@ -240,6 +254,4 @@ class ListAUsersCollaboratedShowcasesViewSet(generics.ListAPIView):
     def get_queryset(self):
         kwarg_slug = self.kwargs.get("slug")
         user = get_object_or_404(User, slug=kwarg_slug)
-
-        collaborator = Collaborator.objects.filter(user=user)
-        return Showcase.objects.filter(user=user)
+        return Showcase.objects.filter(administrator=user)
