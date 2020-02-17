@@ -13,11 +13,10 @@ SECRET_KEY = 'ajw*zrcim60xjdy0#9_g6$&t!iu%&i)@gu_gf8l#1(6a@!$$t!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,6 +36,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'accounts',
     'showcase',
+    'collaborate',
 ]
 
 MIDDLEWARE = [
@@ -159,30 +159,48 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+# restauth old password field required when changing password enabled
 OLD_PASSWORD_FIELD_ENABLED = True
+# allauth and rest auth logout on pasword change disabled
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = False
+LOGOUT_ON_PASSWORD_CHANGE = False
+# alluth user model extension settings
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USER_EMAIL_FIELD = 'email'
+ACCOUNT_USER_MODEL_EMAIL_FIELD = "email"
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
-ACCOUNT_EMAIL_CONFIRMATION_HMAC =True
+# allauth logout on get enabled
+ACCOUNT_LOGOUT_ON_GET = True
+# verification of email is compulsory/mandatory
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# allauth confirm email on get (to be changed later)
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+# login redirect
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS =True
+LOGIN_URL = "api/login/"
+LOGIN_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "api/authsuccess"
+# once email is confirmed login the user, only works if signed up not long ago
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False
+# days in which the confirmation email will expire
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
+# not sure bitr important
+ACCOUNT_EMAIL_CONFIRMATION_HMAC =True
+# when user tries to login and fails the limit conssecutively, 
+# the timeout befor trying again, timeout measured in seconds
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 60     # measured in seconds
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_LOGOUT_REDIRECT_URL ='api/login/'
-# LOGIN_REDIRECT_URL = 'api/user/'
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 60
+# social media verification important
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+# social media email important
 SOCIALACCOUNT_EMAIL_REQUIRED = ACCOUNT_EMAIL_REQUIRED
  
-
+# Email SMPT settings
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -191,8 +209,7 @@ EMAIL_HOST_PASSWORD = '9ja4lifE'
 DEFAULT_FROM_EMAIL = 'opedoetester@gmail.com'
 DEFAULT_TO_EMAIL = EMAIL_HOST_USER
 
-# EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/'
-
+# rest auth serializers
 REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "accounts.api.serializers.CustomUserDetailsSerializer",
     'LOGIN_SERIALIZER': 'accounts.api.serializers.LoginSerializer',

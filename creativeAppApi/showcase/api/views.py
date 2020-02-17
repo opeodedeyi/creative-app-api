@@ -11,14 +11,16 @@ from rest_framework.permissions import (IsAuthenticated,
 from .permissions import (IsUserOrReadOnly, 
                           IsAdmin, 
                           IsUser, 
-                          IsAdminOrOwner)
+                          IsAdminOrOwner,
+                          IsAdminOrReadOnly)
 from .serializers import (ShowcaseSerializer,
                           CommentSerializer,
                           ShowcaseDetaiedSerializer,
                           ShowcaseAdminSerializer,
                           ReplySerializer,
                           CollaboratorSerializer,
-                          CollaboratorUpdateSerializer)
+                          CollaboratorUpdateSerializer,
+                          ShowcaseLikeSerializer)
 from ..models import (Showcase,
                       Comment,
                       ReplyComment,
@@ -45,7 +47,7 @@ class showcaseCreateViewSet(generics.CreateAPIView):
     '''
     queryset = Showcase.objects.all()
     serializer_class = ShowcaseSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def create(self, request):
         serializer_context = {"request": request}
@@ -68,7 +70,7 @@ class showcaseAddAdminAPIView(APIView):
     serializer_class = ShowcaseAdminSerializer
     permission_classes = [IsAdmin]
 
-    def put(self, request, slug):  # PUT is more suited for updating instance
+    def put(self, request, slug):
         showcase = get_object_or_404(Showcase, slug=slug)
         try:
             self.check_object_permissions(request, showcase)
@@ -92,15 +94,64 @@ class showcaseListAdminAPIView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
-class showcaseRUDViewSet(generics.RetrieveUpdateDestroyAPIView):
+class showcaseListVotersAPIView(generics.RetrieveAPIView):
     '''
-    Retrieve, update and destroy showcases view. user must be 
-    owner of the object to be able to destroy and update
+    List all the likes to a showcase
     '''
     queryset = Showcase.objects.all()
     lookup_field = "slug"
-    serializer_class = ShowcaseDetaiedSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsUserOrReadOnly]
+    serializer_class = ShowcaseLikeSerializer
+    permission_classes = [AllowAny]
+
+
+class showcaseRetrieveView(generics.RetrieveAPIView):
+    '''
+    Retrieve showcases view
+    '''
+    queryset = Showcase.objects.all()
+    lookup_field = "slug"
+    serializer_class = ShowcaseSerializer
+    permission_classes = [AllowAny]
+
+
+class showcaseEditDeleteView(APIView):
+    '''
+    edit, delete Showcase view.
+    '''
+    serializer_class = ShowcaseSerializer
+    permission_classes = [IsAdmin]
+
+    def get(self, request, slug):
+        showcase = get_object_or_404(Showcase, slug=slug)
+
+        serializer_context = {"request": request}
+        serializer = self.serializer_class(showcase, context=serializer_context)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, slug):
+        showcase = get_object_or_404(Showcase, slug=slug)
+
+        try:
+            self.check_object_permissions(request, showcase)
+            serializer_context = {"request": request}
+            serializer = self.serializer_class(showcase, data=request.data, context=serializer_context)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except APIException:
+            return Response({'message': 'You are not allowed to make the edit at the moment'}, status=status.HTTP_403_FORBIDDEN)
+
+    def delete(self, request, slug):
+        showcase = get_object_or_404(Showcase, slug=slug)
+
+        try:
+            self.check_object_permissions(request, showcase)
+            showcase.delete()
+            return Response({'message': 'Successfully deleted'}, status=status.HTTP_204_NO_CONTENT)
+        except APIException:
+            return Response({'message': 'You are not allowed to delete this at the moment. Please contact us if you feel something is wrong'}, status=status.HTTP_403_FORBIDDEN)
 
 
 class ShowcaseLikeAPIView(APIView):
@@ -121,7 +172,7 @@ class ShowcaseLikeAPIView(APIView):
         serializer_context = {"request": request}
         serializer = self.serializer_class(showcase, context=serializer_context)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'Successfully Unliked'}, status=status.HTTP_200_OK)
 
     def post(self, request, slug):
         showcase = get_object_or_404(Showcase, slug=slug)
@@ -133,7 +184,7 @@ class ShowcaseLikeAPIView(APIView):
         serializer_context = {"request": request}
         serializer = self.serializer_class(showcase, context=serializer_context)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'Successfully liked'}, status=status.HTTP_200_OK)
 
 
 # COMMENT APIView
@@ -195,7 +246,7 @@ class CommentLikeAPIView(APIView):
         serializer_context = {"request": request}
         serializer = self.serializer_class(comment, context=serializer_context)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'Successfully unliked'}, status=status.HTTP_200_OK)
 
     def post(self, request, pk):
         comment = get_object_or_404(Comment, pk=pk)
@@ -207,7 +258,7 @@ class CommentLikeAPIView(APIView):
         serializer_context = {"request": request}
         serializer = self.serializer_class(comment, context=serializer_context)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'Successfully liked'}, status=status.HTTP_200_OK)
 
 
 # REPLY APIView
@@ -269,7 +320,7 @@ class ReplyLikeAPIView(APIView):
         serializer_context = {"request": request}
         serializer = self.serializer_class(reply, context=serializer_context)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'Successfully unliked'}, status=status.HTTP_200_OK)
 
     def post(self, request, pk):
         reply = get_object_or_404(ReplyComment, pk=pk)
@@ -281,7 +332,7 @@ class ReplyLikeAPIView(APIView):
         serializer_context = {"request": request}
         serializer = self.serializer_class(reply, context=serializer_context)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'Successfully liked'}, status=status.HTTP_200_OK)
 
 
 # Querysets

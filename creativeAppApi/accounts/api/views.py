@@ -53,13 +53,17 @@ class CustomRegisterView(RegisterView):
 #     permission_classes = [AllowAny] 
 
 #     def post(self, request):
-#         user = User.objects.get(email=request.data['email'] # the email sent from the client
+#         user = User.objects.get(email=request.data['email']) # the email sent from the client
+#         user_exists = User.objects.filter(email=user.email).exists()
         
 #         # check if user exists or not, if user doesn't exist, send the response back to the user to let them know that no account with this email exists
-#         # if user exists, resend the email using this
-
-#         send_email_confirmation(request, request.user)
-#         return Response({'message': 'Email confirmation sent'}, status=status.HTTP_201_CREATED)
+#         if user_exists:
+#             return Response({'message': 'email exists'}, status=status.HTTP_201_CREATED)
+#             # if user exists, resend the email using this
+#             # send_email_confirmation(request, request.user)
+#             # return Response({'message': 'Email confirmation sent'}, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response({'message': 'user does not exist'}, status=status.HTTP_201_CREATED)
 
 
 ############################## Listing users in the database ##############################
@@ -134,25 +138,26 @@ class UserFollowerView(APIView):
     def get(self, request, slug):
         user = User.objects.get(slug=slug)
         followers = user.followers.all().filter(status='following').order_by("-followed_on")
-        serializer = FollowerSerializer(followers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = FollowerSerializer(followers, many=True).data
+        data_to_return = list(map(lambda item: item['followed_by'], data))
+        return Response(data_to_return, status=status.HTTP_200_OK)
 
 
 class UserFollowingView(APIView):
     '''
-    Gets all the users a user follows
+    Gets all the following of a user
     '''
     permission_classes = [AllowAny]
 
     def get(self, request, slug):
         user = User.objects.get(slug=slug)
         following = user.following.all().filter(status='following').order_by("-followed_on")
-        serializer = FollowingSerializer(following, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = FollowingSerializer(following, many=True).data
+        data_to_return = list(map(lambda item: item['user'], data))
+        return Response(data_to_return, status=status.HTTP_200_OK)
 
 
 ############################### profile section ###############################
-
 # Note: can get the profile PK from the user view and can edit the profile, or get
 # a users detailed profile.
 
