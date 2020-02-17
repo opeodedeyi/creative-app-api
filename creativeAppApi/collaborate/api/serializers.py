@@ -41,7 +41,10 @@ class CollaborateSerializer(serializers.ModelSerializer):
 
     def get_user_has_shown_interest(self, instance):
         request = self.context.get("request")
-        return instance.interest_collaborate.filter(user=request.user).exists()
+        try:
+            return instance.interest_collaborate.filter(user=request.user).exists()
+        except:
+            return False
     
     def get_comment_count(self, instance):
         return instance.comments.count()
